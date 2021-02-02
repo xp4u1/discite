@@ -1,0 +1,14 @@
+{
+  "appId": "de.xp4u1.discite",
+  "appName": "discite",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "build",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {},
+  "linuxAndroidStudioPath": "/home/paul/.software/path/studio"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "discite",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
