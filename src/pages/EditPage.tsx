@@ -37,6 +37,18 @@ const EditPage: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
 
+  onkeydown = (event) => {
+    if (!(event.metaKey || event.ctrlKey)) return;
+
+    switch (event.key) {
+      // Für diese Kombination muss noch mit alt gedrückt werden.
+      case "n":
+        event.preventDefault();
+        addIndexCard();
+        break;
+    }
+  };
+
   Store.subscribe(() => {
     setCollection(Store.getState().vocabCollection.selectedCollection!);
   });

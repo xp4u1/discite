@@ -34,7 +34,7 @@ import {
 import { getSetting } from "../middleware/Storage";
 import JoyrideTour from "./JoyrideTour";
 
-const { useState } = React;
+const { useEffect, useState } = React;
 
 const IndexCardEditor: React.FC<{
   indexCard: IndexCard;
@@ -46,6 +46,27 @@ const IndexCardEditor: React.FC<{
   const [options, setOptions] = useState<string[]>([]);
   const [response, setResponse] = useState<DictionaryEntriesResponse>();
   const [showToast, setShowToast] = useState<boolean>(false);
+
+  onkeydown = (event) => {
+    if (!(event.metaKey || event.ctrlKey)) return;
+
+    switch (event.key) {
+      case "s":
+        event.preventDefault();
+        saveIndexCard();
+        break;
+      case "j":
+        event.preventDefault();
+        lookUp();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      (document.getElementById("inputWord") as any).setFocus();
+    }, 1000);
+  }, []);
 
   const dismiss = () => {
     modalController.dismiss();
@@ -179,6 +200,7 @@ const IndexCardEditor: React.FC<{
                   })
                 }
                 class="tourInputWord"
+                id="inputWord"
               />
               <IonIcon
                 id="lookUp"
