@@ -96,7 +96,7 @@ const VocabTab: React.FC = () => {
       )
     );
 
-    history.push("vocab/edit");
+    history.push("/vocab/edit");
   };
 
   useEffect(() => {
