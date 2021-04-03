@@ -38,6 +38,22 @@ const VocabTab: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const history = useHistory();
 
+  onkeydown = (event) => {
+    if (!(event.metaKey || event.ctrlKey)) return;
+
+    switch (event.key) {
+      case "f":
+        event.preventDefault();
+        (document.getElementById("searchbar") as any).setFocus();
+        break;
+      // Für diese Kombination muss noch mit alt gedrückt werden.
+      case "n":
+        event.preventDefault();
+        createCollection();
+        break;
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
     Store.subscribe(() => {
@@ -96,7 +112,7 @@ const VocabTab: React.FC = () => {
       )
     );
 
-    history.push("vocab/edit");
+    history.push("/vocab/edit");
   };
 
   useEffect(() => {
@@ -111,6 +127,7 @@ const VocabTab: React.FC = () => {
           setQuery(event.detail.value!);
         }}
         placeholder="Suche"
+        id="searchbar"
       />
 
       <IonModal

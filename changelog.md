@@ -1,3 +1,10 @@
+# 1.2.0
+
+## Neuerungen
+
+- Keyboard shortcuts
+  - Man kann nun bekannte Tastenkürzel auch in Discite nutzen. Mit `strg+s` kann man jetzt beispielsweise Karteikarten speichern oder sie mit `strg+j` automatisch ausfüllen.
+
 # 1.1.0
 
 ## Neuerungen
