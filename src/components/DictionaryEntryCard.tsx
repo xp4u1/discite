@@ -59,9 +59,9 @@ const DictionaryEntryCard: React.FC<{
 
         <IonList class="meanings">
           {props.dictionaryEntry.meanings.length !== 1 &&
-            props.dictionaryEntry.meanings.map((meaning) => (
-              <IonItem key={meaning} lines="none" className="ion-no-padding">
-                {props.dictionaryEntry.meanings.indexOf(meaning) + 1}. {meaning}
+            props.dictionaryEntry.meanings.map((meaning, index) => (
+              <IonItem key={index} lines="none" className="ion-no-padding">
+                {index + 1}. {meaning}
               </IonItem>
             ))}
           {props.dictionaryEntry.meanings.length === 1 && (

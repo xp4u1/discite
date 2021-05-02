@@ -57,21 +57,17 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/search" component={SearchTab} />
-          <Route path="/vocab" component={VocabTab} exact />
-          <Route path="/learn" component={LearnTab} exact />
           <Route path="/settings" component={SettingsTab} />
 
-          <Route path="/vocab/edit" component={EditPage} exact />
-          <Route path="/vocab/practice" component={PracticePage} exact />
-          <Route path="/vocab/overview" component={OverviewPage} exact />
+          <Route path="/vocab" component={VocabTab} exact />
+          <Route path="/vocab/edit/:id" component={EditPage} />
+          <Route path="/vocab/practice/:id" component={PracticePage} />
+          <Route path="/vocab/overview/:id" component={OverviewPage} />
 
-          <Route path="/learn/daily" component={DailyPage} exact />
+          <Route path="/learn" component={LearnTab} exact />
+          <Route path="/learn/daily" component={DailyPage} />
 
-          <Route
-            path="/"
-            render={() => <Redirect to="/search" />}
-            exact={true}
-          />
+          <Route path="/" render={() => <Redirect to="/search" />} exact />
         </IonRouterOutlet>
 
         <IonTabBar slot="bottom">

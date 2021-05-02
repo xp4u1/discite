@@ -22,7 +22,6 @@ import { close } from "ionicons/icons";
 import "./VocabCollectionDetails.sass";
 import VocabCollection from "../classes/VocabCollection";
 import { Store } from "../middleware/Store";
-import { selectVocabCollection } from "../middleware/features/VocabCollectionStore";
 import { addIndexCard } from "../middleware/features/LearnStore";
 
 /**
@@ -56,28 +55,18 @@ const VocabCollectionDetails: React.FC<{
   };
 
   const edit = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/edit");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/edit/${props.vocabCollection.id}`);
   };
 
   const overview = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/overview");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/overview/${props.vocabCollection.id}`);
   };
 
   const practice = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/practice");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/practice/${props.vocabCollection.id}`);
   };
 
   const learn = () => {
@@ -146,7 +135,12 @@ const VocabCollectionDetails: React.FC<{
         <IonGrid className="buttonsGrid">
           <IonRow className="ion-justify-content-evenly">
             <IonCol>
-              <IonButton onClick={practice} color="light" className="button">
+              <IonButton
+                onClick={practice}
+                disabled={props.vocabCollection.indexCards.length <= 1}
+                color="light"
+                className="button"
+              >
                 Für Test üben
               </IonButton>
             </IonCol>

@@ -14,28 +14,26 @@ import {
 import { add } from "ionicons/icons";
 
 import "./VocabTab.sass";
-import VocabCollection from "../classes/VocabCollection";
+import VocabCollection, { newCollection } from "../classes/VocabCollection";
 import VocabCollectionCard from "../components/VocabCollectionCard";
 import VocabCollectionDetails from "../components/VocabCollectionDetails";
-import { Store } from "../middleware/Store";
-import {
-  createVocabCollection,
-  removeVocabCollection,
-  selectVocabCollection,
-} from "../middleware/features/VocabCollectionStore";
 import DisciteTab from "../layouts/DisciteTab";
+import { database } from "../middleware/Storage";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const { useState, useEffect, useCallback } = React;
 
 const VocabTab: React.FC = () => {
-  const [collections, setCollections] = useState<VocabCollection[]>(
-    Store.getState().vocabCollection.collections
-  );
+  const collections = useLiveQuery(() => database.collections.toArray());
   const [visibleCollections, setVisibleCollections] = useState<
     VocabCollection[]
-  >(Store.getState().vocabCollection.collections);
+  >([]);
   const [query, setQuery] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [
+    selectedCollection,
+    setSelectedCollection,
+  ] = useState<VocabCollection>();
   const history = useHistory();
 
   onkeydown = (event) => {
@@ -54,34 +52,15 @@ const VocabTab: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    let isMounted = true;
-    Store.subscribe(() => {
-      if (!isMounted) return;
-
-      let collections = Store.getState().vocabCollection.collections;
-      setCollections(collections);
-
-      if (query !== "") {
-        filterCollections();
-      } else {
-        setVisibleCollections(collections);
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  });
-
   const filterCollections = useCallback(() => {
+    if (!collections) return;
     if (query === "") {
       setVisibleCollections(collections);
       return;
     }
 
     setVisibleCollections(
-      collections!.filter(
+      collections.filter(
         (item) =>
           item.title.toLowerCase().indexOf(query.toLowerCase()) > -1 ||
           item.subtitle.toLowerCase().indexOf(query.toLowerCase()) > -1
@@ -89,35 +68,27 @@ const VocabTab: React.FC = () => {
     );
   }, [query, collections]);
 
-  const openModal = (index: number) => {
-    Store.dispatch(
-      selectVocabCollection(Store.getState().vocabCollection.collections[index])
+  const openModal = (id: number) => {
+    setSelectedCollection(
+      collections!.filter((collection) => collection.id === id)[0]
     );
     setShowModal(true);
   };
 
-  const openCollection = (vocabCollection: VocabCollection) => {
-    openModal(collections.indexOf(vocabCollection));
-  };
-
-  const removeCollection = (vocabCollection: VocabCollection) => {
-    Store.dispatch(removeVocabCollection(collections.indexOf(vocabCollection)));
+  const removeCollection = (id: number) => {
+    database.collections.where("id").equals(id).delete();
   };
 
   const createCollection = () => {
-    Store.dispatch(createVocabCollection(null));
-    Store.dispatch(
-      selectVocabCollection(
-        Store.getState().vocabCollection.collections[collections.length]
-      )
-    );
-
-    history.push("/vocab/edit");
+    database.collections.add(newCollection).then((id) => {
+      history.push(`/vocab/edit/${id}`);
+    });
   };
 
-  useEffect(() => {
-    filterCollections();
-  }, [query, filterCollections]);
+  useEffect(filterCollections, [query, filterCollections]);
+  useEffect(filterCollections, [collections, filterCollections]);
+
+  if (!collections) return null;
 
   return (
     <DisciteTab title="Vokabeln">
@@ -138,7 +109,7 @@ const VocabTab: React.FC = () => {
         }}
       >
         <VocabCollectionDetails
-          vocabCollection={Store.getState().vocabCollection.selectedCollection!}
+          vocabCollection={selectedCollection!}
         ></VocabCollectionDetails>
       </IonModal>
 
@@ -167,11 +138,11 @@ const VocabTab: React.FC = () => {
 
       <IonGrid>
         <IonRow>
-          {visibleCollections!.map((collection) => (
-            <IonCol class="column" key={collections!.indexOf(collection)}>
+          {visibleCollections.map((collection, index) => (
+            <IonCol class="column" key={index}>
               <VocabCollectionCard
                 vocabCollection={collection}
-                openHandler={openCollection}
+                openHandler={openModal}
                 removeHandler={removeCollection}
               />
             </IonCol>

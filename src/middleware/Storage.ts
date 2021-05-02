@@ -1,4 +1,5 @@
 import { Plugins } from "@capacitor/core";
+import { DisciteDatabase } from "./database/DisciteDatabase";
 const { Storage } = Plugins;
 
 const key = "redux";
@@ -61,3 +62,5 @@ export const getSetting = async (key: string, defaultReturn?: any) => {
 
   return defaultReturn;
 };
+
+export const database = new DisciteDatabase();

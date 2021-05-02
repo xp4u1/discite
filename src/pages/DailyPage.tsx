@@ -162,35 +162,48 @@ const DailyPage: React.FC = () => {
               </IonRow>
             )}
             {showSolution && (
-              <IonRow className="ion-justify-content-evenly">
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.NotKnown)}
-                    expand="block"
-                    color="danger"
-                  >
-                    Unsicher
-                  </IonButton>
-                </IonCol>
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.Known)}
-                    expand="block"
-                    color="warning"
-                  >
-                    Gewusst
-                  </IonButton>
-                </IonCol>
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.Easy)}
-                    expand="block"
-                    color="success"
-                  >
-                    Leicht
-                  </IonButton>
-                </IonCol>
-              </IonRow>
+              <>
+                <IonRow className="ion-justify-content-evenly">
+                  <IonCol>
+                    <IonButton
+                      onClick={() => setStatus(Status.NotKnown)}
+                      expand="block"
+                      color="danger"
+                    >
+                      Neu
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => setStatus(Status.Known)}
+                      expand="block"
+                      color="warning"
+                    >
+                      Schwer
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => setStatus(Status.Easy)}
+                      expand="block"
+                      color="light"
+                    >
+                      Zu leicht
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => setStatus(Status.Easy)}
+                      expand="block"
+                      color="success"
+                    >
+                      Gut
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </>
             )}
           </IonFooter>
         </>

@@ -26,19 +26,15 @@ import DictionaryEntry, {
 } from "../classes/DictionaryEntry";
 import { tours } from "../classes/Tours";
 import Dictionary from "../middleware/Dictionary";
-import { Store } from "../middleware/Store";
-import {
-  selectVocabCollection,
-  updateVocabCollection,
-} from "../middleware/features/VocabCollectionStore";
 import { getSetting } from "../middleware/Storage";
 import JoyrideTour from "./JoyrideTour";
 
 const { useEffect, useState } = React;
 
 const IndexCardEditor: React.FC<{
+  id: number;
   indexCard: IndexCard;
-  indexCardId: number;
+  saveHandler: Function;
 }> = (props) => {
   const [indexCard, setIndexCard] = useState<DictionaryEntry>(
     props.indexCard.content!
@@ -73,51 +69,8 @@ const IndexCardEditor: React.FC<{
   };
 
   const saveIndexCard = () => {
-    const state = Object.assign({}, Store.getState());
-    const collectionIndex = state.vocabCollection.collections.indexOf(
-      state.vocabCollection.selectedCollection!
-    );
-    let collection = state.vocabCollection.collections[collectionIndex];
-
-    const card: IndexCard = {
-      content: indexCard,
-      repetition: 0,
-    };
-    if (collection.indexCards.length === props.indexCardId) {
-      Store.dispatch(
-        updateVocabCollection({
-          id: collectionIndex,
-          data: {
-            ...collection,
-            indexCards: [...collection.indexCards, card],
-          },
-        })
-      );
-    } else {
-      Store.dispatch(
-        updateVocabCollection({
-          id: collectionIndex,
-          data: {
-            ...collection,
-            indexCards: collection.indexCards.map((value: any, index: any) => {
-              // Tauscht Alt gegen Neu.
-              return index === props.indexCardId ? card : value;
-            }),
-          },
-        })
-      );
-    }
-
-    setTimeout(() => {
-      // Änderungen müssen auch in den "selected" Zwischenspeicher übernommen werden.
-      Store.dispatch(
-        selectVocabCollection(
-          Store.getState().vocabCollection.collections[collectionIndex]
-        )
-      );
-
-      dismiss();
-    }, 0);
+    props.saveHandler(props.id, indexCard);
+    dismiss();
   };
 
   const apiRequest = async (word: string, onlySchool: boolean) => {

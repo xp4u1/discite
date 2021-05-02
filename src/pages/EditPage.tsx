@@ -15,27 +15,24 @@ import {
   IonToast,
 } from "@ionic/react";
 import { trash, create } from "ionicons/icons";
+import { useParams } from "react-router";
 
 import "./EditPage.sass";
-import VocabCollection from "../classes/VocabCollection";
+import VocabCollection, { newCollection } from "../classes/VocabCollection";
 import IndexCard from "../classes/IndexCard";
-import { Store } from "../middleware/Store";
-import {
-  selectVocabCollection,
-  updateVocabCollection,
-} from "../middleware/features/VocabCollectionStore";
 import IndexCardEditor from "../components/IndexCardEditor";
 import DiscitePage from "../layouts/DiscitePage";
+import { database } from "../middleware/Storage";
+import DictionaryEntry from "../classes/DictionaryEntry";
 
 const { useEffect, useState } = React;
 
 const EditPage: React.FC = () => {
-  const [collection, setCollection] = useState<VocabCollection>(
-    Store.getState().vocabCollection.selectedCollection!
-  );
+  const [collection, setCollection] = useState<VocabCollection>(newCollection);
   const [selectedIndexCard, selectIndexCard] = useState<IndexCard>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
+  const params = useParams<{ id: string | undefined }>();
 
   onkeydown = (event) => {
     if (!(event.metaKey || event.ctrlKey)) return;
@@ -49,21 +46,18 @@ const EditPage: React.FC = () => {
     }
   };
 
-  Store.subscribe(() => {
-    setCollection(Store.getState().vocabCollection.selectedCollection!);
-  });
-
   useEffect(() => {
-    Store.dispatch(
-      updateVocabCollection({
-        id: Store.getState().vocabCollection.collections.indexOf(
-          Store.getState().vocabCollection.selectedCollection!
-        ),
-        data: collection,
-      })
-    );
-    Store.dispatch(selectVocabCollection(collection));
-  }, [collection]);
+    database.collections.get(Number.parseInt(params.id!)).then((result) => {
+      setCollection(result!);
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Alle Änderungen werden automatisch gespeichert.
+  useEffect(() => {
+    database.collections.update(Number.parseInt(params.id!), collection);
+  }, [collection, params]);
 
   const closeSlidings = () => {
     const item = document.querySelector("ion-item-sliding");
@@ -71,40 +65,16 @@ const EditPage: React.FC = () => {
   };
 
   const removeIndexCard = (indexCard: IndexCard) => {
-    const state = Store.getState();
-    const index = state.vocabCollection.collections.indexOf(
-      state.vocabCollection.selectedCollection!
-    );
-    const vocabCollection = state.vocabCollection.collections[index];
-
-    Store.dispatch(
-      updateVocabCollection({
-        id: index,
-        data: {
-          ...vocabCollection,
-          indexCards: vocabCollection.indexCards.filter(
-            (card) => indexCard !== card
-          ),
-        },
-      })
-    );
-
-    setTimeout(() => {
-      // Änderungen müssen auch in den "selected" Zwischenspeicher übernommen werden.
-      Store.dispatch(
-        selectVocabCollection(
-          Store.getState().vocabCollection.collections[index]
-        )
-      );
-
-      closeSlidings();
-    }, 0);
+    setCollection({
+      ...collection,
+      indexCards: collection.indexCards.filter((card) => indexCard !== card),
+    });
+    closeSlidings();
   };
 
   const editIndexCard = (indexCard: IndexCard) => {
     selectIndexCard(indexCard);
     setShowModal(true);
-
     closeSlidings();
   };
 
@@ -123,6 +93,28 @@ const EditPage: React.FC = () => {
         repetition: 0,
       }
     );
+  };
+
+  const saveIndexCard = (id: number, content: DictionaryEntry) => {
+    const indexCard: IndexCard = {
+      content: content,
+      repetition: 0,
+    };
+
+    if (id === -1) {
+      setCollection({
+        ...collection,
+        indexCards: [...collection.indexCards, indexCard],
+      });
+    } else {
+      setCollection({
+        ...collection,
+        indexCards: collection.indexCards.map((card, index) =>
+          // Tauscht die Karte mit der Id gegen den neuen Eintrag.
+          index === id ? indexCard : card
+        ),
+      });
+    }
   };
 
   return (
@@ -246,15 +238,10 @@ const EditPage: React.FC = () => {
         onDidDismiss={() => setShowModal(false)}
       >
         <IndexCardEditor
+          id={collection.indexCards.indexOf(selectedIndexCard!)}
           indexCard={selectedIndexCard!}
-          indexCardId={
-            collection.indexCards.indexOf(selectedIndexCard!) === -1
-              ? // Fügt am Ende hinzu:
-                collection.indexCards.length
-              : // Ändert vorhandene Karteikarte:
-                collection.indexCards.indexOf(selectedIndexCard!)
-          }
-        ></IndexCardEditor>
+          saveHandler={saveIndexCard}
+        />
       </IonModal>
 
       <IonToast

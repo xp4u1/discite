@@ -1,6 +1,7 @@
 import IndexCard from "./IndexCard";
 
 export default interface VocabCollection {
+  id?: number;
   title: string;
   subtitle: string;
   description: string;
@@ -24,3 +25,17 @@ export default interface VocabCollection {
    */
   lastLearnt: string;
 }
+
+const randomBackgroundImage = (): string => {
+  // Zufällige Zahl zwischen 0 und 3
+  return `/assets/images/bg-${Math.floor(Math.random() * 4)}.png`;
+};
+
+export const newCollection = {
+  title: "Neue Sammlung",
+  subtitle: "",
+  description: "",
+  image: randomBackgroundImage(),
+  indexCards: [],
+  lastLearnt: new Date().toJSON(),
+};
