@@ -60,19 +60,21 @@ const getData = async () => {
 const LearnTab: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [statsLearned, setStatsLearned] = useState<any[]>([]);
+  const [now, setNow] = useState<Date>(new Date());
   const history = useHistory();
 
+  const entriesNow = useLiveQuery(() =>
+    database.learn.where("date").belowOrEqual(now.getTime()).toArray()
+  );
   const entriesToday = useLiveQuery(() =>
     database.learn.where("date").belowOrEqual(endTodayTimestamp()).toArray()
   );
-
   const entriesTomorrow = useLiveQuery(() =>
     database.learn
       .where("date")
       .between(startTomorrowTimestamp(), endTomorrowTimestamp())
       .toArray()
   );
-
   const learnEntries = useLiveQuery(() => database.learn.toArray());
 
   const learn = () =>
@@ -82,9 +84,13 @@ const LearnTab: React.FC = () => {
 
   useEffect(() => {
     getData().then(setStatsLearned);
+    setTimeout(() => {
+      setNow(new Date());
+    }, 60000);
   }, []);
 
-  if (!(entriesToday && entriesTomorrow && learnEntries)) return null;
+  if (!(entriesNow && entriesToday && entriesTomorrow && learnEntries))
+    return null;
 
   return (
     <DisciteTab title="Lernen" className="learnTab">
@@ -104,14 +110,25 @@ const LearnTab: React.FC = () => {
               <IonCardContent>
                 <section>
                   <p>
-                    Du musst heute noch{" "}
+                    Jetzt musst du{" "}
                     <IonText color="primary">
-                      {`${entriesToday.length} ${
-                        entriesToday.length === 1 ? "Eintrag" : "Einträge"
+                      {`${entriesNow.length} ${
+                        entriesNow.length === 1 ? "Eintrag" : "Einträge"
                       }`}
                     </IonText>{" "}
                     lernen.
                   </p>
+                  {entriesToday.length > entriesNow.length && (
+                    <p>
+                      Es sind noch weitere{" "}
+                      <IonText color="primary">
+                        {`${entriesToday.length} ${
+                          entriesToday.length === 1 ? "Eintrag" : "Einträge"
+                        }`}
+                      </IonText>{" "}
+                      für den heutigen Tag geplant.
+                    </p>
+                  )}
                 </section>
               </IonCardContent>
             </IonCard>
@@ -145,7 +162,7 @@ const LearnTab: React.FC = () => {
 
       <IonCard className="tourLearnStats">
         <IonCardHeader>
-          <IonCardTitle>Geübte Vokabeln</IonCardTitle>
+          <IonCardTitle>Wiederholungen</IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
           <LineChart data={statsLearned} />

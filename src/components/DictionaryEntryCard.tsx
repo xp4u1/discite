@@ -19,11 +19,7 @@ import { bug, school } from "ionicons/icons";
 
 import DictionaryEntry from "../classes/DictionaryEntry";
 import "./DictionaryEntryCard.sass";
-import { Store } from "../middleware/Store";
-import {
-  addIndexCard,
-  nextRepetition,
-} from "../middleware/features/LearnStore";
+import { addCard } from "../middleware/Scheduler";
 
 const { useState } = React;
 
@@ -32,18 +28,6 @@ const DictionaryEntryCard: React.FC<{
   actionButtons?: boolean;
 }> = (props) => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
-
-  const learn = () => {
-    Store.dispatch(
-      addIndexCard({
-        indexCard: {
-          content: props.dictionaryEntry,
-          repetition: 0,
-        },
-        date: nextRepetition(0),
-      })
-    );
-  };
 
   return (
     <IonCard className="dictionaryEntryCard">
@@ -111,13 +95,11 @@ const DictionaryEntryCard: React.FC<{
             text: "Abbrechen",
             role: "cancel",
             cssClass: "secondary",
-            handler: () => {
-              setShowAlert(false);
-            },
+            handler: () => setShowAlert(false),
           },
           {
             text: "Lernen",
-            handler: learn,
+            handler: () => addCard(props.dictionaryEntry, new Date()),
           },
         ]}
       />

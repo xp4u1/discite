@@ -7,11 +7,10 @@ export interface LearnEntry {
   id?: number;
   content: DictionaryEntry;
   /**
-   * Unix-Zeitstempel, warnn der Eintrag erneut angesehen werden sollte.
+   * Unix-Zeitstempel, wann der Eintrag erneut angesehen werden sollte.
    */
   date: number;
   ease: number;
-  // Lern-Phase
   graduated: boolean;
   relearning: boolean;
   step: number;
@@ -28,6 +27,7 @@ export interface StatsEntry {
    */
   date: number;
   graduated: boolean;
+  relearning: boolean;
   lastInterval: number;
   button: number;
 }
@@ -44,7 +44,7 @@ export class DisciteDatabase extends Dexie {
       // welche im Filter benutzt werden können.
       collections: "++id, title, subtitle, description, lastLearnt",
       learn: "++id, date, ease, graduated, relearning, step, lastInterval",
-      stats: "++id, date, graduated, lastInterval, button",
+      stats: "++id, date, graduated, relearning, lastInterval, button",
     });
 
     this.collections = this.table("collections");

@@ -6,11 +6,13 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonModal,
   IonToast,
   IonToggle,
 } from "@ionic/react";
 import {
   archiveOutline,
+  buildOutline,
   fileTrayFullOutline,
   mapOutline,
   refreshOutline,
@@ -27,6 +29,8 @@ import {
   loadBackup,
   loadVocabCollection,
 } from "../middleware/Backup";
+import AdvancedSettingsModal from "../components/AdvancedSettingsModal";
+import { defaultShowTimespan } from "../middleware/Defaults";
 
 const { useState, useEffect } = React;
 
@@ -39,6 +43,10 @@ const SettingsTab: React.FC = () => {
   const [allEntriesIndexCard, setAllEntriesIndexCard] = useState<boolean>(
     false
   );
+  const [showTimespan, setShowTimespan] = useState<boolean>(
+    defaultShowTimespan
+  );
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [toast, setToastData] = useState<{
     show: boolean;
     message: string;
@@ -113,6 +121,15 @@ const SettingsTab: React.FC = () => {
     getSetting("darkMode").then((result) => {
       setDarkMode(result);
     });
+    getSetting("shortenedDictionaryEntries", false).then((result) => {
+      setShortenedDictionaryEntries(result);
+    });
+    getSetting("allEntriesIndexCard", false).then((result) => {
+      setAllEntriesIndexCard(result);
+    });
+    getSetting("showTimespan", defaultShowTimespan).then((result) => {
+      setShowTimespan(result);
+    });
   }, []);
 
   useEffect(() => {
@@ -127,6 +144,10 @@ const SettingsTab: React.FC = () => {
   useEffect(() => {
     setSetting("allEntriesIndexCard", allEntriesIndexCard);
   }, [allEntriesIndexCard]);
+
+  useEffect(() => {
+    setSetting("showTimespan", showTimespan);
+  }, [showTimespan]);
 
   return (
     <DisciteTab title="Einstellungen" className="settingsTab">
@@ -154,7 +175,7 @@ const SettingsTab: React.FC = () => {
             }
           />
         </IonItem>
-        <IonItem>
+        <IonItem lines="none">
           <IonLabel className="tourSettingsAllMeanings">
             Karteikarten: Alle Bedeutungen
           </IonLabel>
@@ -192,6 +213,27 @@ const SettingsTab: React.FC = () => {
           </IonButton>
         </IonItem>
 
+        <IonItemDivider>Langzeittrainer</IonItemDivider>
+        <IonItem>
+          <IonLabel className="tourSettingsShortMeanings">
+            Zeitspanne anzeigen
+          </IonLabel>
+          <IonToggle
+            checked={showTimespan}
+            onIonChange={(event) => setShowTimespan(event.detail.checked)}
+          />
+        </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Erweiterte Einstellungen</IonLabel>
+          <IonButton
+            onClick={() => setShowModal(true)}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={buildOutline} />
+          </IonButton>
+        </IonItem>
+
         <IonItemDivider>Hilfen</IonItemDivider>
         <IonItem lines="none">
           <IonLabel>Touren wiederherstellen</IonLabel>
@@ -200,6 +242,14 @@ const SettingsTab: React.FC = () => {
           </IonButton>
         </IonItem>
       </IonList>
+
+      <IonModal
+        swipeToClose
+        isOpen={showModal}
+        onDidDismiss={() => setShowModal(false)}
+      >
+        <AdvancedSettingsModal />
+      </IonModal>
 
       <IonToast
         isOpen={toast.show}

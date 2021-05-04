@@ -23,6 +23,9 @@ import "./VocabCollectionDetails.sass";
 import VocabCollection from "../classes/VocabCollection";
 import { Store } from "../middleware/Store";
 import { addIndexCard } from "../middleware/features/LearnStore";
+import { getSetting } from "../middleware/Storage";
+import { defaultMaxNewCards } from "../middleware/Defaults";
+import { addCard } from "../middleware/Scheduler";
 
 /**
  * Teilt einen beliebigen Array in kleinere Stücke auf.
@@ -69,19 +72,17 @@ const VocabCollectionDetails: React.FC<{
     history.push(`/vocab/practice/${props.vocabCollection.id}`);
   };
 
-  const learn = () => {
-    chunk(props.vocabCollection.indexCards, 10).forEach((array, index) => {
+  const learn = async () => {
+    // Karteikarten werden aufgeteilt.
+    chunk(
+      props.vocabCollection.indexCards,
+      await getSetting("maxNewCards", defaultMaxNewCards)
+    ).forEach((array, index) => {
       const date = new Date();
-      date.setHours(0, 0, 0, 0);
       date.setDate(date.getDate() + index);
 
       array.forEach((indexCard) => {
-        Store.dispatch(
-          addIndexCard({
-            indexCard: indexCard,
-            date: date,
-          })
-        );
+        addCard(indexCard.content, date);
       });
     });
 
