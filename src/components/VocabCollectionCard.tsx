@@ -28,7 +28,7 @@ const VocabCollectionCard: React.FC<{
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const open = () => {
-    props.openHandler(props.vocabCollection);
+    props.openHandler(props.vocabCollection.id);
   };
 
   const confirmRemove = () => {
@@ -36,7 +36,7 @@ const VocabCollectionCard: React.FC<{
   };
 
   const remove = () => {
-    props.removeHandler(props.vocabCollection);
+    props.removeHandler(props.vocabCollection.id);
   };
 
   const share = async () => {

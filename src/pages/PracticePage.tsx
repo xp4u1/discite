@@ -1,52 +1,47 @@
 import * as React from "react";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { IonButton, IonRow, IonFooter, IonAlert, IonCol } from "@ionic/react";
 
 import "./LearnPage.sass";
-import { Store } from "../middleware/Store";
 import DictionaryEntryCard from "../components/DictionaryEntryCard";
-import IndexCard from "../classes/IndexCard";
-import { updateVocabCollection } from "../middleware/features/VocabCollectionStore";
 import DiscitePage from "../layouts/DiscitePage";
 import { shuffle } from "../utils";
+import { database } from "../middleware/Storage";
+import DictionaryEntry from "../classes/DictionaryEntry";
 
 const { useState, useEffect } = React;
 
-interface Progress {
-  queue: IndexCard[];
-  knownWords: IndexCard[];
-  unknownWords: IndexCard[];
-  lastRound: boolean;
-}
-
 const PracticePage: React.FC = () => {
-  const [progress, setProgress] = useState<Progress>({
-    queue: shuffle(
-      Store.getState().vocabCollection.selectedCollection!.indexCards
-    ),
+  const [progress, setProgress] = useState<{
+    queue?: DictionaryEntry[];
+    knownWords: DictionaryEntry[];
+    unknownWords: DictionaryEntry[];
+    lastRound: boolean;
+  }>({
     knownWords: [],
     unknownWords: [],
     lastRound: false,
   });
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [lastIndexCard, setLastIndexCard] = useState<IndexCard>();
+  const [lastIndexCard, setLastIndexCard] = useState<DictionaryEntry>();
   const history = useHistory();
+  const params = useParams<{ id: string | undefined }>();
 
   const setStatus = (known: boolean) => {
-    setLastIndexCard(progress.queue[0]);
+    setLastIndexCard(progress.queue![0]);
 
     if (known) {
       setProgress({
         ...progress,
-        queue: progress.queue.filter((_card, index) => index !== 0),
-        knownWords: [...progress.knownWords, progress.queue[0]],
+        queue: progress.queue!.filter((_card, index) => index !== 0),
+        knownWords: [...progress.knownWords, progress.queue![0]],
       });
     } else {
       setProgress({
         ...progress,
-        queue: progress.queue.filter((_card, index) => index !== 0),
-        unknownWords: [...progress.unknownWords, progress.queue[0]],
+        queue: progress.queue!.filter((_card, index) => index !== 0),
+        unknownWords: [...progress.unknownWords, progress.queue![0]],
       });
     }
 
@@ -54,63 +49,64 @@ const PracticePage: React.FC = () => {
   };
 
   const finish = () => {
-    const state = Store.getState();
-    const collection = state.vocabCollection.selectedCollection!;
-    const index = state.vocabCollection.collections.indexOf(collection);
-
-    Store.dispatch(
-      updateVocabCollection({
-        id: index,
-        data: {
-          ...collection,
-          indexCards: collection.indexCards.map((card) => ({
-            content: card.content,
-            repetition: card.repetition + 1,
-          })),
-          lastLearnt: new Date().toJSON(),
-        },
-      })
-    );
+    database.collections.update(Number.parseInt(params.id!), {
+      lastLearnt: new Date().toJSON(),
+    });
 
     setShowAlert(false);
     history.push("/vocab");
   };
 
   useEffect(() => {
-    if (progress.queue.length === 0) {
-      // Alle Vokabeln werden beherrscht.
-      if (progress.unknownWords.length === 0) {
-        if (progress.lastRound) {
-          setShowAlert(true);
-        } else {
-          // Alle Vokabeln werden noch einmal wiederholt.
-          let queue;
-          do {
-            queue = shuffle(progress.knownWords);
-          } while (queue[0] === lastIndexCard);
+    database.collections.get(Number.parseInt(params.id!)).then((result) => {
+      setProgress({
+        ...progress,
+        queue: shuffle(result!.indexCards),
+      });
+    });
 
-          setProgress({
-            queue: queue,
-            knownWords: [],
-            unknownWords: [],
-            lastRound: true,
-          });
-        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // Daten müssen geladen sein.
+    if (!progress.queue) return;
+
+    // Wird nur aufgerufen, wenn keine Vokabelkarten mehr da sind.
+    if (progress.queue!.length !== 0) return;
+
+    // Alle Vokabeln werden beherrscht.
+    if (progress.unknownWords.length === 0) {
+      if (progress.lastRound) {
+        setShowAlert(true);
       } else {
-        // Nicht beherrschte Vokabeln werden wieder in die Warteschleife geschoben.
+        // Alle Vokabeln werden noch einmal wiederholt.
         let queue;
         do {
-          queue = shuffle(progress.unknownWords);
-
-          if (progress.unknownWords.length === 1) break;
+          queue = shuffle(progress.knownWords);
         } while (queue[0] === lastIndexCard);
 
         setProgress({
-          ...progress,
           queue: queue,
+          knownWords: [],
           unknownWords: [],
+          lastRound: true,
         });
       }
+    } else {
+      // Nicht beherrschte Vokabeln werden wieder in die Warteschleife geschoben.
+      let queue;
+      do {
+        queue = shuffle(progress.unknownWords);
+
+        if (progress.unknownWords.length === 1) break;
+      } while (queue[0] === lastIndexCard);
+
+      setProgress({
+        ...progress,
+        queue: queue,
+        unknownWords: [],
+      });
     }
   }, [progress, lastIndexCard]);
 
@@ -121,11 +117,11 @@ const PracticePage: React.FC = () => {
       backText="Abbrechen"
       className="learnPage"
     >
-      {progress.queue.length !== 0 && (
+      {progress.queue && progress.queue!.length !== 0 && (
         <>
-          <h1 className="ion-margin">{progress.queue[0].content.word}</h1>
+          <h1 className="ion-margin">{progress.queue![0].word}</h1>
           {showSolution && (
-            <DictionaryEntryCard dictionaryEntry={progress.queue[0].content} />
+            <DictionaryEntryCard dictionaryEntry={progress.queue![0]} />
           )}
 
           <IonFooter className="actionFooter">

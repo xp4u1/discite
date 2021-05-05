@@ -21,9 +21,9 @@ import { close } from "ionicons/icons";
 
 import "./VocabCollectionDetails.sass";
 import VocabCollection from "../classes/VocabCollection";
-import { Store } from "../middleware/Store";
-import { selectVocabCollection } from "../middleware/features/VocabCollectionStore";
-import { addIndexCard } from "../middleware/features/LearnStore";
+import { getSetting } from "../middleware/Storage";
+import { defaultMaxNewCards } from "../middleware/Defaults";
+import { addCard } from "../middleware/Scheduler";
 
 /**
  * Teilt einen beliebigen Array in kleinere Stücke auf.
@@ -56,43 +56,31 @@ const VocabCollectionDetails: React.FC<{
   };
 
   const edit = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/edit");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/edit/${props.vocabCollection.id}`);
   };
 
   const overview = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/overview");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/overview/${props.vocabCollection.id}`);
   };
 
   const practice = () => {
-    Store.dispatch(selectVocabCollection(props.vocabCollection));
-
-    setTimeout(() => {
-      dismiss();
-      history.push("/vocab/practice");
-    }, 5);
+    dismiss();
+    history.push(`/vocab/practice/${props.vocabCollection.id}`);
   };
 
-  const learn = () => {
-    chunk(props.vocabCollection.indexCards, 10).forEach((array, index) => {
+  const learn = async () => {
+    // Karteikarten werden aufgeteilt.
+    chunk(
+      props.vocabCollection.indexCards,
+      await getSetting("maxNewCards", defaultMaxNewCards)
+    ).forEach((array, index) => {
       const date = new Date();
-      date.setHours(0, 0, 0, 0);
       date.setDate(date.getDate() + index);
 
       array.forEach((indexCard) => {
-        Store.dispatch(
-          addIndexCard({
-            indexCard: indexCard,
-            date: date,
-          })
-        );
+        addCard(indexCard.content, date);
       });
     });
 
@@ -146,7 +134,12 @@ const VocabCollectionDetails: React.FC<{
         <IonGrid className="buttonsGrid">
           <IonRow className="ion-justify-content-evenly">
             <IonCol>
-              <IonButton onClick={practice} color="light" className="button">
+              <IonButton
+                onClick={practice}
+                disabled={props.vocabCollection.indexCards.length <= 1}
+                color="light"
+                className="button"
+              >
                 Für Test üben
               </IonButton>
             </IonCol>
@@ -166,7 +159,7 @@ const VocabCollectionDetails: React.FC<{
             {props.vocabCollection.indexCards.map((indexCard, index) => (
               <IonCol key={index}>
                 <IonItem lines="none">
-                  <IonLabel>{indexCard.content.word}</IonLabel>
+                  <IonLabel>{indexCard.word}</IonLabel>
                 </IonItem>
               </IonCol>
             ))}

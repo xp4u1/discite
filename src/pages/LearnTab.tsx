@@ -20,29 +20,37 @@ import "chart.js";
 
 import "./LearnTab.sass";
 import DisciteTab from "../layouts/DisciteTab";
-import { Store } from "../middleware/Store";
-import { getEntries, getEntriesToday } from "../middleware/features/LearnStore";
 import JoyrideTour from "../components/JoyrideTour";
 import { tours } from "../classes/Tours";
+import { database } from "../middleware/Storage";
+import { useLiveQuery } from "dexie-react-hooks";
+import {
+  endTodayTimestamp,
+  endTomorrowTimestamp,
+  startTomorrowTimestamp,
+} from "../middleware/Calendar";
 
-const { useState } = React;
+const { useEffect, useState } = React;
 
-const getData = (): any[] => {
+const getData = async () => {
   const data: any[] = [];
   const date = new Date();
+  date.setHours(0, 0, 0, 0);
 
   for (let index = 0; index < (window.innerWidth >= 800 ? 7 : 5); index++) {
-    const day = new Date(date.setDate(date.getDate() - 1));
-    day.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - 1);
 
-    const entries = Store.getState().learn.stats.progress.filter((entry) => {
-      const date = new Date(entry.date);
-      return date.getTime() === day.getTime();
-    });
+    const end = new Date(date.toJSON());
+    end.setHours(23, 59, 59, 999);
+
+    const entries = await database.stats
+      .where("date")
+      .between(date.getTime(), end.getTime())
+      .toArray();
 
     data.push([
-      `${day.getUTCDate()}.${day.getUTCMonth() + 1}`,
-      entries.reduce((sum, current) => sum + current.cardsLearnt, 0),
+      `${date.getUTCDate()}.${date.getUTCMonth() + 1}`,
+      entries.length,
     ]);
   }
 
@@ -51,26 +59,33 @@ const getData = (): any[] => {
 
 const LearnTab: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
-  const [stats] = useState<any[]>(getData());
+  const [statsLearned, setStatsLearned] = useState<any[]>([]);
   const history = useHistory();
 
-  const entriesToday = getEntriesToday(Store.getState().learn);
-  const entriesTomorrow = getEntries(Store.getState().learn, 1);
-
-  const newEntriesToday = entriesToday.filter(
-    (entry) => entry.indexCard.repetition === 0
+  const entriesToday = useLiveQuery(() =>
+    database.learn
+      .where("date")
+      .belowOrEqual(endTodayTimestamp())
+      .sortBy("date")
   );
-  const newEntriesTomorrow = entriesTomorrow.filter(
-    (entry) => entry.indexCard.repetition === 0
+  const entriesTomorrow = useLiveQuery(() =>
+    database.learn
+      .where("date")
+      .between(startTomorrowTimestamp(), endTomorrowTimestamp())
+      .toArray()
   );
+  const learnEntries = useLiveQuery(() => database.learn.toArray());
 
-  const learn = () => {
-    if (entriesToday.length > 0) {
-      history.push("/learn/daily");
-    } else {
-      setShowToast(true);
-    }
-  };
+  const learn = () =>
+    entriesToday!.length > 0
+      ? history.push("/learn/daily")
+      : setShowToast(true);
+
+  useEffect(() => {
+    getData().then(setStatsLearned);
+  }, []);
+
+  if (!(entriesToday && entriesTomorrow && learnEntries)) return null;
 
   return (
     <DisciteTab title="Lernen" className="learnTab">
@@ -90,7 +105,7 @@ const LearnTab: React.FC = () => {
               <IonCardContent>
                 <section>
                   <p>
-                    Du musst heute noch{" "}
+                    Heute musst du{" "}
                     <IonText color="primary">
                       {`${entriesToday.length} ${
                         entriesToday.length === 1 ? "Eintrag" : "Einträge"
@@ -98,20 +113,14 @@ const LearnTab: React.FC = () => {
                     </IonText>{" "}
                     lernen.
                   </p>
-
-                  {newEntriesToday.length === 1 && (
+                  {entriesToday.length > 0 && (
                     <p>
-                      Davon ist <IonText color="primary">eine Vokabel</IonText>{" "}
-                      neu für dich.
-                    </p>
-                  )}
-                  {newEntriesToday.length > 1 && (
-                    <p>
-                      Davon sind{" "}
+                      Davon ist nächste Eintrag für{" "}
                       <IonText color="primary">
-                        {newEntriesToday.length} Vokabeln
+                        {new Date(entriesToday[0].date).getUTCHours()}:
+                        {new Date(entriesToday[0].date).getUTCMinutes()}
                       </IonText>{" "}
-                      neu für dich.
+                      geplant.
                     </p>
                   )}
                 </section>
@@ -138,22 +147,6 @@ const LearnTab: React.FC = () => {
                     </IonText>{" "}
                     lernen.
                   </p>
-
-                  {newEntriesTomorrow.length === 1 && (
-                    <p>
-                      Davon ist <IonText color="primary">eine Vokabel</IonText>{" "}
-                      neu für dich.
-                    </p>
-                  )}
-                  {newEntriesTomorrow.length > 1 && (
-                    <p>
-                      Davon sind{" "}
-                      <IonText color="primary">
-                        {newEntriesTomorrow.length} Vokabeln
-                      </IonText>{" "}
-                      neu für dich.
-                    </p>
-                  )}
                 </section>
               </IonCardContent>
             </IonCard>
@@ -163,10 +156,10 @@ const LearnTab: React.FC = () => {
 
       <IonCard className="tourLearnStats">
         <IonCardHeader>
-          <IonCardTitle>Geübte Vokabeln</IonCardTitle>
+          <IonCardTitle>Wiederholungen</IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
-          <LineChart data={stats} />
+          <LineChart data={statsLearned} />
         </IonCardContent>
       </IonCard>
 
@@ -176,15 +169,7 @@ const LearnTab: React.FC = () => {
         </IonCardHeader>
         <IonCardContent>
           <section>
-            <p>Deine Wörter: {Store.getState().learn.entries.length}</p>
-            <p>
-              Im Langzeitgedächtnis:{" "}
-              {
-                Store.getState().learn.entries.filter(
-                  (entry) => entry.indexCard.repetition === 9
-                ).length
-              }
-            </p>
+            <p>Deine Wörter: {learnEntries.length}</p>
           </section>
         </IonCardContent>
       </IonCard>
