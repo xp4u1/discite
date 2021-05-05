@@ -3,131 +3,85 @@ import { useHistory } from "react-router";
 import { IonButton, IonRow, IonFooter, IonAlert, IonCol } from "@ionic/react";
 
 import "./LearnPage.sass";
-import { Store } from "../middleware/Store";
 import DictionaryEntryCard from "../components/DictionaryEntryCard";
 import DiscitePage from "../layouts/DiscitePage";
-import LearnEntry from "../classes/LearnEntry";
-import {
-  addProgressToday,
-  getEntriesToday,
-  nextRepetition,
-  setEntries,
-} from "../middleware/features/LearnStore";
 import { shuffle } from "../utils";
+import { LearnEntry } from "../middleware/database/DisciteDatabase";
+import { database, getSetting } from "../middleware/Storage";
+import { calculate, humanDifference } from "../middleware/Scheduler";
+import { defaultPreStudy, defaultShowTimespan } from "../middleware/Defaults";
 
 const { useState, useEffect } = React;
 
-interface Progress {
-  queue: LearnEntry[];
-  repeat: LearnEntry[];
-  learnt: LearnEntry[];
-}
-
-enum Status {
-  Easy,
-  Known,
-  NotKnown,
-}
-
 const DailyPage: React.FC = () => {
-  const [progress, setProgress] = useState<Progress>({
-    queue: shuffle(getEntriesToday(Store.getState().learn)),
-    repeat: [],
-    learnt: [],
-  });
-  const [lastEntry, setLastEntry] = useState<LearnEntry>();
+  const [queue, setQueue] = useState<LearnEntry[]>([]);
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [showTimespan, setShowTimespan] = useState<boolean>(
+    defaultShowTimespan
+  );
+  const [intervals, setIntervals] = useState<string[]>([]);
   const history = useHistory();
 
-  const setStatus = (status: Status) => {
-    let learnEntry = progress.queue[0];
-    setLastEntry(learnEntry);
-
-    switch (status) {
-      case Status.Easy:
-        const newEntry = {
-          ...learnEntry,
-          indexCard: {
-            ...learnEntry.indexCard,
-            repetition: learnEntry.indexCard.repetition + 1,
-          },
-        };
-
-        setProgress({
-          ...progress,
-          queue: progress.queue.filter((entry) => entry !== learnEntry),
-          learnt: [...progress.learnt, newEntry],
-        });
-        break;
-
-      case Status.Known:
-        setProgress({
-          ...progress,
-          queue: progress.queue.filter((entry) => entry !== learnEntry),
-          repeat: [...progress.repeat, learnEntry],
-        });
-        break;
-
-      case Status.NotKnown:
-        const newEntry2 = {
-          ...learnEntry,
-          indexCard: {
-            ...learnEntry.indexCard,
-            repetition: 0,
-          },
-        };
-
-        setProgress({
-          ...progress,
-          queue: progress.queue.filter((entry) => entry !== learnEntry),
-          repeat: [...progress.repeat, newEntry2],
-        });
-        break;
-    }
-
-    setShowSolution(false);
-  };
-
   const finish = () => {
-    const entries = Store.getState().learn.entries;
-    const entriesToday = getEntriesToday(Store.getState().learn);
-    const otherEntries = entries.filter(
-      (entry) => entriesToday.indexOf(entry) === -1
-    );
-
-    const newEntries = progress.learnt.map((entry) => ({
-      ...entry,
-      nextRepetition: nextRepetition(entry.indexCard.repetition).toJSON(),
-    }));
-
-    Store.dispatch(setEntries([...otherEntries, ...newEntries]));
-    Store.dispatch(addProgressToday(progress.learnt.length));
-
-    setShowAlert(true);
     history.push("/learn");
   };
 
+  const handleClick = async (button: number) => {
+    const newCard = await calculate(queue[0], button);
+    database.learn.put(newCard);
+
+    // In die Statistiken eintragen.
+    database.stats.add({
+      button: button,
+      date: new Date().getTime(),
+      graduated: queue[0].graduated,
+      lastInterval: queue[0].lastInterval,
+      relearning: queue[0].relearning,
+    });
+
+    setQueue(queue.slice(1));
+    setShowSolution(false);
+  };
+
   useEffect(() => {
-    if (progress.queue.length === 0) {
-      if (progress.repeat.length === 0) {
-        setShowAlert(true);
-      } else {
-        let queue;
-        do {
-          queue = shuffle(progress.repeat);
+    database.learn
+      .where("date")
+      .belowOrEqual(new Date().getTime())
+      .toArray()
+      .then((entries) => setQueue(shuffle(entries)));
 
-          if (progress.repeat.length === 1) break;
-        } while (queue[0] === lastEntry);
+    getSetting("showTimespan", defaultShowTimespan).then((result) => {
+      setShowTimespan(result);
+    });
+  }, []);
 
-        setProgress({
-          ...progress,
-          queue: queue,
-          repeat: [],
+  useEffect(() => {
+    if (queue.length === 0) {
+      getSetting("preStudy", defaultPreStudy).then((result) => {
+        database.learn
+          .where("date")
+          .belowOrEqual(new Date().getTime() + result * 60000)
+          .toArray()
+          .then((entries) =>
+            entries.length > 0 ? setQueue(shuffle(entries)) : setShowAlert(true)
+          );
+      });
+    } else {
+      const result: string[] = [];
+
+      for (let index = 0; index < 4; index++) {
+        if (queue[0].relearning && index > 1) continue;
+        if (!queue[0].graduated && index > 2) continue;
+
+        calculate(queue[0], index).then((entry) => {
+          result[index] = `(${humanDifference(entry.date)})`;
         });
       }
+
+      setIntervals(result);
     }
-  }, [progress, lastEntry]);
+  }, [queue]);
 
   return (
     <DiscitePage
@@ -136,15 +90,11 @@ const DailyPage: React.FC = () => {
       backText="Abbrechen"
       className="learnPage"
     >
-      {progress.queue.length !== 0 && (
+      {queue.length !== 0 && (
         <>
-          <h1 className="ion-margin">
-            {progress.queue[0].indexCard.content.word}
-          </h1>
+          <h1 className="ion-margin">{queue[0].content.word}</h1>
           {showSolution && (
-            <DictionaryEntryCard
-              dictionaryEntry={progress.queue[0].indexCard.content}
-            />
+            <DictionaryEntryCard dictionaryEntry={queue[0].content} />
           )}
 
           <IonFooter className="actionFooter">
@@ -161,36 +111,165 @@ const DailyPage: React.FC = () => {
                 </IonCol>
               </IonRow>
             )}
-            {showSolution && (
-              <IonRow className="ion-justify-content-evenly">
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.NotKnown)}
-                    expand="block"
-                    color="danger"
-                  >
-                    Unsicher
-                  </IonButton>
-                </IonCol>
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.Known)}
-                    expand="block"
-                    color="warning"
-                  >
-                    Gewusst
-                  </IonButton>
-                </IonCol>
-                <IonCol>
-                  <IonButton
-                    onClick={() => setStatus(Status.Easy)}
-                    expand="block"
-                    color="success"
-                  >
-                    Leicht
-                  </IonButton>
-                </IonCol>
-              </IonRow>
+            {/* Graduated */}
+            {showSolution && queue[0].graduated && (
+              <>
+                <IonRow className="ion-justify-content-evenly">
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(0)}
+                      expand="block"
+                      color="danger"
+                    >
+                      Nochmal
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[0]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(1)}
+                      expand="block"
+                      color="warning"
+                    >
+                      Schwer
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[1]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(3)}
+                      expand="block"
+                      color="light"
+                    >
+                      Zu leicht
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[3]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(2)}
+                      expand="block"
+                      color="success"
+                    >
+                      Gut
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[2]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </>
+            )}
+            {/* Learning */}
+            {showSolution && !queue[0].graduated && !queue[0].relearning && (
+              <>
+                <IonRow className="ion-justify-content-evenly">
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(0)}
+                      expand="block"
+                      color="danger"
+                    >
+                      Nochmal
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[0]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(2)}
+                      expand="block"
+                      color="light"
+                    >
+                      Zu leicht
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[2]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+                <IonRow>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(1)}
+                      expand="block"
+                      color="success"
+                    >
+                      Gut
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[1]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </>
+            )}
+            {/* Relearning */}
+            {showSolution && queue[0].relearning && (
+              <>
+                <IonRow className="ion-justify-content-evenly">
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(0)}
+                      expand="block"
+                      color="danger"
+                    >
+                      Nochmal
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[0]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                  <IonCol>
+                    <IonButton
+                      onClick={() => handleClick(1)}
+                      expand="block"
+                      color="success"
+                    >
+                      Gut
+                      {showTimespan && (
+                        <>
+                          <br />
+                          {intervals[1]}
+                        </>
+                      )}
+                    </IonButton>
+                  </IonCol>
+                </IonRow>
+              </>
             )}
           </IonFooter>
         </>
@@ -200,7 +279,7 @@ const DailyPage: React.FC = () => {
         isOpen={showAlert}
         onDidDismiss={finish}
         header="Super!"
-        message={`Du bist alle Vokabeln für heute durchgegangen. Schau doch morgen wieder vorbei!`}
+        message={"Du bist alle Karten durchgegangen."}
         buttons={["Abschließen"]}
       />
     </DiscitePage>

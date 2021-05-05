@@ -5,10 +5,8 @@ import {
 } from "@capacitor/core";
 import { isPlatform } from "@ionic/react";
 
-import { RootState, Store } from "./Store";
-import { replaceStore } from "../utils";
 import VocabCollection from "../classes/VocabCollection";
-import { createVocabCollection } from "./features/VocabCollectionStore";
+import { database } from "./Storage";
 
 const { Filesystem } = Plugins;
 
@@ -58,35 +56,42 @@ export const downloadFile = (
 };
 
 /**
- * Speichert ein Backup des Stores in einer Datei im lokalen Speicher des Geräts.
+ * Speichert ein Backup der Datenbank in einer Datei im lokalen Speicher des Geräts.
  */
 export const saveBackup = async () => {
   return new Promise<string>((resolve, reject) => {
-    const state = JSON.stringify(Store.getState());
-    const fileName = `${new Date().toISOString().split("T")[0]}.discite.json`;
+    database
+      .export()
+      .then((exportedDatabase) => {
+        const state = JSON.stringify(exportedDatabase);
+        const fileName = `${
+          new Date().toISOString().split("T")[0]
+        }.discite.json`;
 
-    if (isPlatform("capacitor")) {
-      Filesystem.writeFile({
-        path: fileName,
-        data: state,
-        directory: FilesystemDirectory.Documents,
-        encoding: FilesystemEncoding.UTF8,
+        if (isPlatform("capacitor")) {
+          Filesystem.writeFile({
+            path: fileName,
+            data: state,
+            directory: FilesystemDirectory.Documents,
+            encoding: FilesystemEncoding.UTF8,
+          })
+            .then((result) => {
+              resolve(
+                `Das Backup wurde gespeichert: „${result.uri.replace(
+                  "file://",
+                  ""
+                )}“`
+              );
+            })
+            .catch((reason) => {
+              reject(reason);
+            });
+        } else {
+          downloadFile(state, fileName, "application/json");
+          resolve("Das Backup steht zum Download bereit.");
+        }
       })
-        .then((result) => {
-          resolve(
-            `Das Backup wurde gespeichert: „${result.uri.replace(
-              "file://",
-              ""
-            )}“`
-          );
-        })
-        .catch((reason) => {
-          reject(reason);
-        });
-    } else {
-      downloadFile(state, fileName, "application/json");
-      resolve("Das Backup steht zum Download bereit.");
-    }
+      .catch((reason) => reject(reason));
   });
 };
 
@@ -104,20 +109,8 @@ export const loadBackup = async () => {
 
           reader.readAsText(file, "UTF-8");
           reader.onload = (event) => {
-            const result = event.target!.result as string;
-            const state = JSON.parse(result) as RootState;
-
-            if (
-              state.vocabCollection === undefined ||
-              state.learn === undefined
-            ) {
-              reject(
-                "Das Discite-Backup ist ungültig. Die Daten konnten nicht eingelesen werden!"
-              );
-            } else {
-              replaceStore(state);
-              resolve();
-            }
+            database.import(JSON.parse(event.target!.result as string));
+            resolve();
           };
         } else {
           reject("Das ist kein Discite-Backup!");
@@ -154,7 +147,7 @@ export const loadVocabCollection = () => {
                 "Die Discite-Vokabelsammlung ist ungültig. Die Daten konnten nicht eingelesen werden!"
               );
             } else {
-              Store.dispatch(createVocabCollection(collection));
+              database.collections.add(collection);
               resolve();
             }
           };

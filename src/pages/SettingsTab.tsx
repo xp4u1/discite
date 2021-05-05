@@ -6,11 +6,15 @@ import {
   IonItemDivider,
   IonLabel,
   IonList,
+  IonModal,
   IonToast,
   IonToggle,
 } from "@ionic/react";
 import {
   archiveOutline,
+  buildOutline,
+  checkmarkDoneOutline,
+  enterOutline,
   fileTrayFullOutline,
   mapOutline,
   refreshOutline,
@@ -27,6 +31,9 @@ import {
   loadBackup,
   loadVocabCollection,
 } from "../middleware/Backup";
+import AdvancedSettingsModal from "../components/AdvancedSettingsModal";
+import { defaultShowTimespan } from "../middleware/Defaults";
+import { importV1 } from "../middleware/database/Migration";
 
 const { useState, useEffect } = React;
 
@@ -39,6 +46,10 @@ const SettingsTab: React.FC = () => {
   const [allEntriesIndexCard, setAllEntriesIndexCard] = useState<boolean>(
     false
   );
+  const [showTimespan, setShowTimespan] = useState<boolean>(
+    defaultShowTimespan
+  );
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [toast, setToastData] = useState<{
     show: boolean;
     message: string;
@@ -49,9 +60,9 @@ const SettingsTab: React.FC = () => {
     color: "",
   });
 
-  const resetTours = () => {
+  const resetTours = (active: boolean) => {
     Object.values(tours).forEach((value) => {
-      setSetting(value.name, true);
+      setSetting(value.name, active);
     });
   };
 
@@ -109,9 +120,34 @@ const SettingsTab: React.FC = () => {
       });
   };
 
+  const importLegacy = () => {
+    importV1().then((success) => {
+      success
+        ? setToastData({
+            show: true,
+            message: "Die Daten wurden erfolgreich importiert.",
+            color: "primary",
+          })
+        : setToastData({
+            show: true,
+            message: "Es existieren keine alten Daten!",
+            color: "danger",
+          });
+    });
+  };
+
   useEffect(() => {
     getSetting("darkMode").then((result) => {
       setDarkMode(result);
+    });
+    getSetting("shortenedDictionaryEntries", false).then((result) => {
+      setShortenedDictionaryEntries(result);
+    });
+    getSetting("allEntriesIndexCard", false).then((result) => {
+      setAllEntriesIndexCard(result);
+    });
+    getSetting("showTimespan", defaultShowTimespan).then((result) => {
+      setShowTimespan(result);
     });
   }, []);
 
@@ -127,6 +163,10 @@ const SettingsTab: React.FC = () => {
   useEffect(() => {
     setSetting("allEntriesIndexCard", allEntriesIndexCard);
   }, [allEntriesIndexCard]);
+
+  useEffect(() => {
+    setSetting("showTimespan", showTimespan);
+  }, [showTimespan]);
 
   return (
     <DisciteTab title="Einstellungen" className="settingsTab">
@@ -154,7 +194,7 @@ const SettingsTab: React.FC = () => {
             }
           />
         </IonItem>
-        <IonItem>
+        <IonItem lines="none">
           <IonLabel className="tourSettingsAllMeanings">
             Karteikarten: Alle Bedeutungen
           </IonLabel>
@@ -181,7 +221,7 @@ const SettingsTab: React.FC = () => {
             <IonIcon slot="icon-only" size="l" icon={refreshOutline} />
           </IonButton>
         </IonItem>
-        <IonItem lines="none">
+        <IonItem>
           <IonLabel>Vokabelsammlung importieren</IonLabel>
           <IonButton
             onClick={importVocabCollection}
@@ -191,15 +231,68 @@ const SettingsTab: React.FC = () => {
             <IonIcon slot="icon-only" size="l" icon={fileTrayFullOutline} />
           </IonButton>
         </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Alte Daten importieren</IonLabel>
+          <IonButton
+            onClick={importLegacy}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={enterOutline} />
+          </IonButton>
+        </IonItem>
+
+        <IonItemDivider>Langzeittrainer</IonItemDivider>
+        <IonItem>
+          <IonLabel className="tourSettingsShortMeanings">
+            Zeitspanne anzeigen
+          </IonLabel>
+          <IonToggle
+            checked={showTimespan}
+            onIonChange={(event) => setShowTimespan(event.detail.checked)}
+          />
+        </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Erweiterte Einstellungen</IonLabel>
+          <IonButton
+            onClick={() => setShowModal(true)}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={buildOutline} />
+          </IonButton>
+        </IonItem>
 
         <IonItemDivider>Hilfen</IonItemDivider>
-        <IonItem lines="none">
+        <IonItem>
           <IonLabel>Touren wiederherstellen</IonLabel>
-          <IonButton onClick={resetTours} color="light" class="settingsButton">
+          <IonButton
+            onClick={() => resetTours(true)}
+            color="light"
+            class="settingsButton"
+          >
             <IonIcon slot="icon-only" size="l" icon={mapOutline} />
           </IonButton>
         </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Alle Touren beenden</IonLabel>
+          <IonButton
+            onClick={() => resetTours(false)}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={checkmarkDoneOutline} />
+          </IonButton>
+        </IonItem>
       </IonList>
+
+      <IonModal
+        swipeToClose
+        isOpen={showModal}
+        onDidDismiss={() => setShowModal(false)}
+      >
+        <AdvancedSettingsModal />
+      </IonModal>
 
       <IonToast
         isOpen={toast.show}

@@ -1,6 +1,7 @@
-import IndexCard from "./IndexCard";
+import DictionaryEntry from "./DictionaryEntry";
 
 export default interface VocabCollection {
+  id?: number;
   title: string;
   subtitle: string;
   description: string;
@@ -11,7 +12,7 @@ export default interface VocabCollection {
    * Beispiel: `/assets/images/bg-2.png`
    */
   image: string;
-  indexCards: IndexCard[];
+  indexCards: DictionaryEntry[];
   /**
    * Datum, an dem das letzte Mal die Funktion
    * „Für einen Test üben“ benutzt wurde.
@@ -19,8 +20,22 @@ export default interface VocabCollection {
    * Benutzung:
    * ```ts
    * const date = new Date(collection.lastLearnt);
-   * collection.lastLearnt = new Date().toJSON();
+   * collection.lastLearnt = Date.now();
    * ```
    */
-  lastLearnt: string;
+  lastLearnt: number;
 }
+
+const randomBackgroundImage = (): string => {
+  // Zufällige Zahl zwischen 0 und 3
+  return `/assets/images/bg-${Math.floor(Math.random() * 4)}.png`;
+};
+
+export const newCollection: VocabCollection = {
+  title: "Neue Sammlung",
+  subtitle: "",
+  description: "",
+  image: randomBackgroundImage(),
+  indexCards: [],
+  lastLearnt: Date.now(),
+};

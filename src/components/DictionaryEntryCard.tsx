@@ -19,11 +19,7 @@ import { bug, school } from "ionicons/icons";
 
 import DictionaryEntry from "../classes/DictionaryEntry";
 import "./DictionaryEntryCard.sass";
-import { Store } from "../middleware/Store";
-import {
-  addIndexCard,
-  nextRepetition,
-} from "../middleware/features/LearnStore";
+import { addCard } from "../middleware/Scheduler";
 
 const { useState } = React;
 
@@ -33,18 +29,6 @@ const DictionaryEntryCard: React.FC<{
 }> = (props) => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
-  const learn = () => {
-    Store.dispatch(
-      addIndexCard({
-        indexCard: {
-          content: props.dictionaryEntry,
-          repetition: 0,
-        },
-        date: nextRepetition(0),
-      })
-    );
-  };
-
   return (
     <IonCard className="dictionaryEntryCard">
       <IonCardHeader className="header">
@@ -53,15 +37,15 @@ const DictionaryEntryCard: React.FC<{
       </IonCardHeader>
       <IonCardContent className="content">
         <IonText color="primary">
-          {props.dictionaryEntry.principal_forms.join(", ")}
+          {props.dictionaryEntry.forms.join(", ")}
         </IonText>
-        <p className="form">{props.dictionaryEntry.form}</p>
+        <p className="european">{props.dictionaryEntry.european}</p>
 
         <IonList class="meanings">
           {props.dictionaryEntry.meanings.length !== 1 &&
-            props.dictionaryEntry.meanings.map((meaning) => (
-              <IonItem key={meaning} lines="none" className="ion-no-padding">
-                {props.dictionaryEntry.meanings.indexOf(meaning) + 1}. {meaning}
+            props.dictionaryEntry.meanings.map((meaning, index) => (
+              <IonItem key={index} lines="none" className="ion-no-padding">
+                {index + 1}. {meaning}
               </IonItem>
             ))}
           {props.dictionaryEntry.meanings.length === 1 && (
@@ -111,13 +95,11 @@ const DictionaryEntryCard: React.FC<{
             text: "Abbrechen",
             role: "cancel",
             cssClass: "secondary",
-            handler: () => {
-              setShowAlert(false);
-            },
+            handler: () => setShowAlert(false),
           },
           {
             text: "Lernen",
-            handler: learn,
+            handler: () => addCard(props.dictionaryEntry, new Date()),
           },
         ]}
       />
