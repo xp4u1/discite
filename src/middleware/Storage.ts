@@ -2,36 +2,6 @@ import { Plugins } from "@capacitor/core";
 import { DisciteDatabase } from "./database/DisciteDatabase";
 const { Storage } = Plugins;
 
-const key = "redux";
-
-/**
- * Lädt den zwischengespeicherten Store in den Speicher.
- *
- * Speichermethoden:
- * - Local Storage - PWA
- * - UserDefaults - iOS
- * - SharedPreferences - Android
- */
-export const loadStore = async () => {
-  const data = await Storage.get({ key: key });
-  if (data.value) return JSON.parse(data.value);
-
-  return null;
-};
-
-/**
- * Speichert den Store im Speicher.
- * @param store aktueller Snapshot des Stores
- *
- * Speichermethoden:
- * - Local Storage - PWA
- * - UserDefaults - iOS
- * - SharedPreferences - Android
- */
-export const saveStore = async (store: any) => {
-  setSetting(key, store);
-};
-
 /**
  * Speichert einen Wert im Speicher.
  * @param key Schlüssel, damit der Wert später wieder ausgelesen werden kann.
@@ -61,6 +31,19 @@ export const getSetting = async (key: string, defaultReturn?: any) => {
   if (data.value) return JSON.parse(data.value);
 
   return defaultReturn;
+};
+
+/**
+ * Entfernt einen Eintrag aus dem Speicher.
+ * @param key Schlüssel, dessen Eintrag gelöscht werden soll.
+ *
+ * Speichermethoden:
+ * - Local Storage - PWA
+ * - UserDefaults - iOS
+ * - SharedPreferences - Android
+ */
+export const clearSetting = async (key: string) => {
+  Storage.remove({ key: key });
 };
 
 export const database = new DisciteDatabase();

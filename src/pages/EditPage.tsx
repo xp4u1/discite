@@ -19,7 +19,6 @@ import { useParams } from "react-router";
 
 import "./EditPage.sass";
 import VocabCollection, { newCollection } from "../classes/VocabCollection";
-import IndexCard from "../classes/IndexCard";
 import IndexCardEditor from "../components/IndexCardEditor";
 import DiscitePage from "../layouts/DiscitePage";
 import { database } from "../middleware/Storage";
@@ -29,7 +28,7 @@ const { useEffect, useState } = React;
 
 const EditPage: React.FC = () => {
   const [collection, setCollection] = useState<VocabCollection>(newCollection);
-  const [selectedIndexCard, selectIndexCard] = useState<IndexCard>();
+  const [selectedIndexCard, selectIndexCard] = useState<DictionaryEntry>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const params = useParams<{ id: string | undefined }>();
@@ -64,7 +63,7 @@ const EditPage: React.FC = () => {
     if (item) item.closeOpened();
   };
 
-  const removeIndexCard = (indexCard: IndexCard) => {
+  const removeIndexCard = (indexCard: DictionaryEntry) => {
     setCollection({
       ...collection,
       indexCards: collection.indexCards.filter((card) => indexCard !== card),
@@ -72,7 +71,7 @@ const EditPage: React.FC = () => {
     closeSlidings();
   };
 
-  const editIndexCard = (indexCard: IndexCard) => {
+  const editIndexCard = (indexCard: DictionaryEntry) => {
     selectIndexCard(indexCard);
     setShowModal(true);
     closeSlidings();
@@ -82,25 +81,16 @@ const EditPage: React.FC = () => {
     editIndexCard(
       // Neue, leere Karteikarte
       {
-        content: {
-          word: "",
-          principal_forms: [],
-          form: "",
-          description: "",
-          european: "",
-          meanings: [],
-        },
-        repetition: 0,
+        word: "",
+        forms: [],
+        description: "",
+        european: "",
+        meanings: [],
       }
     );
   };
 
-  const saveIndexCard = (id: number, content: DictionaryEntry) => {
-    const indexCard: IndexCard = {
-      content: content,
-      repetition: 0,
-    };
-
+  const saveIndexCard = (id: number, indexCard: DictionaryEntry) => {
     if (id === -1) {
       setCollection({
         ...collection,
@@ -211,7 +201,7 @@ const EditPage: React.FC = () => {
                 index === collection.indexCards.length - 1 ? "none" : "full"
               }
             >
-              <IonLabel>{indexCard.content.word}</IonLabel>
+              <IonLabel>{indexCard.word}</IonLabel>
             </IonItem>
 
             <IonItemOptions side="end">

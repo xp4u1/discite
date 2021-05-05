@@ -51,4 +51,29 @@ export class DisciteDatabase extends Dexie {
     this.learn = this.table("learn");
     this.stats = this.table("stats");
   }
+
+  // Da das Packet zum Importieren und Exportieren von Dexie Datenbanken
+  // scheinbar nicht mit TypeScript funktioniert, diese Lösung.
+  // Code von https://dexie.org/docs/ExportImport/dexie-export-import
+  public export() {
+    return this.transaction("r", this.tables, () => {
+      return Promise.all(
+        this.tables.map((table) =>
+          table.toArray().then((rows) => ({ table: table.name, rows: rows }))
+        )
+      );
+    });
+  }
+
+  public import(data: any) {
+    return this.transaction("rw", this.tables, () => {
+      return Promise.all(
+        data.map((t: any) =>
+          this.table(t.table)
+            .clear()
+            .then(() => this.table(t.table).bulkAdd(t.rows))
+        )
+      );
+    });
+  }
 }

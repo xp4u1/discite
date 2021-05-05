@@ -18,7 +18,7 @@ import {
 import "./SearchTab.sass";
 import DictionaryEntry from "../classes/DictionaryEntry";
 import DictionaryEntryCard from "../components/DictionaryEntryCard";
-import Dictionary from "../middleware/Dictionary";
+import { searchDictionary } from "../middleware/Dictionary";
 import { getSetting } from "../middleware/Storage";
 import DisciteTab from "../layouts/DisciteTab";
 import JoyrideTour from "../components/JoyrideTour";
@@ -32,11 +32,11 @@ const SearchTab: React.FC = () => {
   const [showEntries, setShowEntries] = useState<boolean>(false);
 
   const search = async (query: string) => {
-    Dictionary.search(
+    searchDictionary(
       query,
       await getSetting("shortenedDictionaryEntries")
     ).then((response) => {
-      setEntries(response.entries);
+      setEntries(response);
       setShowEntries(true);
     });
   };

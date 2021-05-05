@@ -37,9 +37,9 @@ const DictionaryEntryCard: React.FC<{
       </IonCardHeader>
       <IonCardContent className="content">
         <IonText color="primary">
-          {props.dictionaryEntry.principal_forms.join(", ")}
+          {props.dictionaryEntry.forms.join(", ")}
         </IonText>
-        <p className="form">{props.dictionaryEntry.form}</p>
+        <p className="european">{props.dictionaryEntry.european}</p>
 
         <IonList class="meanings">
           {props.dictionaryEntry.meanings.length !== 1 &&

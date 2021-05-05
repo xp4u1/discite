@@ -21,8 +21,6 @@ import { close } from "ionicons/icons";
 
 import "./VocabCollectionDetails.sass";
 import VocabCollection from "../classes/VocabCollection";
-import { Store } from "../middleware/Store";
-import { addIndexCard } from "../middleware/features/LearnStore";
 import { getSetting } from "../middleware/Storage";
 import { defaultMaxNewCards } from "../middleware/Defaults";
 import { addCard } from "../middleware/Scheduler";
@@ -161,7 +159,7 @@ const VocabCollectionDetails: React.FC<{
             {props.vocabCollection.indexCards.map((indexCard, index) => (
               <IonCol key={index}>
                 <IonItem lines="none">
-                  <IonLabel>{indexCard.content.word}</IonLabel>
+                  <IonLabel>{indexCard.word}</IonLabel>
                 </IonItem>
               </IonCol>
             ))}

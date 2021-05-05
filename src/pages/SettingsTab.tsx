@@ -13,6 +13,8 @@ import {
 import {
   archiveOutline,
   buildOutline,
+  checkmarkDoneOutline,
+  enterOutline,
   fileTrayFullOutline,
   mapOutline,
   refreshOutline,
@@ -31,6 +33,7 @@ import {
 } from "../middleware/Backup";
 import AdvancedSettingsModal from "../components/AdvancedSettingsModal";
 import { defaultShowTimespan } from "../middleware/Defaults";
+import { importV1 } from "../middleware/database/Migration";
 
 const { useState, useEffect } = React;
 
@@ -57,9 +60,9 @@ const SettingsTab: React.FC = () => {
     color: "",
   });
 
-  const resetTours = () => {
+  const resetTours = (active: boolean) => {
     Object.values(tours).forEach((value) => {
-      setSetting(value.name, true);
+      setSetting(value.name, active);
     });
   };
 
@@ -115,6 +118,22 @@ const SettingsTab: React.FC = () => {
           color: "danger",
         });
       });
+  };
+
+  const importLegacy = () => {
+    importV1().then((success) => {
+      success
+        ? setToastData({
+            show: true,
+            message: "Die Daten wurden erfolgreich importiert.",
+            color: "primary",
+          })
+        : setToastData({
+            show: true,
+            message: "Es existieren keine alten Daten!",
+            color: "danger",
+          });
+    });
   };
 
   useEffect(() => {
@@ -202,7 +221,7 @@ const SettingsTab: React.FC = () => {
             <IonIcon slot="icon-only" size="l" icon={refreshOutline} />
           </IonButton>
         </IonItem>
-        <IonItem lines="none">
+        <IonItem>
           <IonLabel>Vokabelsammlung importieren</IonLabel>
           <IonButton
             onClick={importVocabCollection}
@@ -210,6 +229,16 @@ const SettingsTab: React.FC = () => {
             class="settingsButton"
           >
             <IonIcon slot="icon-only" size="l" icon={fileTrayFullOutline} />
+          </IonButton>
+        </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Alte Daten importieren</IonLabel>
+          <IonButton
+            onClick={importLegacy}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={enterOutline} />
           </IonButton>
         </IonItem>
 
@@ -235,10 +264,24 @@ const SettingsTab: React.FC = () => {
         </IonItem>
 
         <IonItemDivider>Hilfen</IonItemDivider>
-        <IonItem lines="none">
+        <IonItem>
           <IonLabel>Touren wiederherstellen</IonLabel>
-          <IonButton onClick={resetTours} color="light" class="settingsButton">
+          <IonButton
+            onClick={() => resetTours(true)}
+            color="light"
+            class="settingsButton"
+          >
             <IonIcon slot="icon-only" size="l" icon={mapOutline} />
+          </IonButton>
+        </IonItem>
+        <IonItem lines="none">
+          <IonLabel>Alle Touren beenden</IonLabel>
+          <IonButton
+            onClick={() => resetTours(false)}
+            color="light"
+            class="settingsButton"
+          >
+            <IonIcon slot="icon-only" size="l" icon={checkmarkDoneOutline} />
           </IonButton>
         </IonItem>
       </IonList>

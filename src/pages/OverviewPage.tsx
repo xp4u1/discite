@@ -5,13 +5,13 @@ import { useParams } from "react-router";
 import "./OverviewPage.sass";
 import DictionaryEntryCard from "../components/DictionaryEntryCard";
 import DiscitePage from "../layouts/DiscitePage";
-import IndexCard from "../classes/IndexCard";
 import { database } from "../middleware/Storage";
+import DictionaryEntry from "../classes/DictionaryEntry";
 
 const { useEffect, useState } = React;
 
 const OverviewPage: React.FC = () => {
-  const [indexCards, setIndexCards] = useState<IndexCard[]>([]);
+  const [indexCards, setIndexCards] = useState<DictionaryEntry[]>([]);
   const params = useParams<{ id: string | undefined }>();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const OverviewPage: React.FC = () => {
         <IonRow>
           {indexCards.map((indexCard, index) => (
             <IonCol key={index} className="entry">
-              <DictionaryEntryCard dictionaryEntry={indexCard.content} />
+              <DictionaryEntryCard dictionaryEntry={indexCard} />
             </IonCol>
           ))}
         </IonRow>

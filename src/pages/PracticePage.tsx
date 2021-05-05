@@ -4,18 +4,18 @@ import { IonButton, IonRow, IonFooter, IonAlert, IonCol } from "@ionic/react";
 
 import "./LearnPage.sass";
 import DictionaryEntryCard from "../components/DictionaryEntryCard";
-import IndexCard from "../classes/IndexCard";
 import DiscitePage from "../layouts/DiscitePage";
 import { shuffle } from "../utils";
 import { database } from "../middleware/Storage";
+import DictionaryEntry from "../classes/DictionaryEntry";
 
 const { useState, useEffect } = React;
 
 const PracticePage: React.FC = () => {
   const [progress, setProgress] = useState<{
-    queue?: IndexCard[];
-    knownWords: IndexCard[];
-    unknownWords: IndexCard[];
+    queue?: DictionaryEntry[];
+    knownWords: DictionaryEntry[];
+    unknownWords: DictionaryEntry[];
     lastRound: boolean;
   }>({
     knownWords: [],
@@ -24,7 +24,7 @@ const PracticePage: React.FC = () => {
   });
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [lastIndexCard, setLastIndexCard] = useState<IndexCard>();
+  const [lastIndexCard, setLastIndexCard] = useState<DictionaryEntry>();
   const history = useHistory();
   const params = useParams<{ id: string | undefined }>();
 
@@ -119,9 +119,9 @@ const PracticePage: React.FC = () => {
     >
       {progress.queue && progress.queue!.length !== 0 && (
         <>
-          <h1 className="ion-margin">{progress.queue![0].content.word}</h1>
+          <h1 className="ion-margin">{progress.queue![0].word}</h1>
           {showSolution && (
-            <DictionaryEntryCard dictionaryEntry={progress.queue![0].content} />
+            <DictionaryEntryCard dictionaryEntry={progress.queue![0]} />
           )}
 
           <IonFooter className="actionFooter">

@@ -60,14 +60,13 @@ const getData = async () => {
 const LearnTab: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
   const [statsLearned, setStatsLearned] = useState<any[]>([]);
-  const [now, setNow] = useState<Date>(new Date());
   const history = useHistory();
 
-  const entriesNow = useLiveQuery(() =>
-    database.learn.where("date").belowOrEqual(now.getTime()).toArray()
-  );
   const entriesToday = useLiveQuery(() =>
-    database.learn.where("date").belowOrEqual(endTodayTimestamp()).toArray()
+    database.learn
+      .where("date")
+      .belowOrEqual(endTodayTimestamp())
+      .sortBy("date")
   );
   const entriesTomorrow = useLiveQuery(() =>
     database.learn
@@ -84,13 +83,9 @@ const LearnTab: React.FC = () => {
 
   useEffect(() => {
     getData().then(setStatsLearned);
-    setTimeout(() => {
-      setNow(new Date());
-    }, 60000);
   }, []);
 
-  if (!(entriesNow && entriesToday && entriesTomorrow && learnEntries))
-    return null;
+  if (!(entriesToday && entriesTomorrow && learnEntries)) return null;
 
   return (
     <DisciteTab title="Lernen" className="learnTab">
@@ -110,23 +105,22 @@ const LearnTab: React.FC = () => {
               <IonCardContent>
                 <section>
                   <p>
-                    Jetzt musst du{" "}
+                    Heute musst du{" "}
                     <IonText color="primary">
-                      {`${entriesNow.length} ${
-                        entriesNow.length === 1 ? "Eintrag" : "Einträge"
+                      {`${entriesToday.length} ${
+                        entriesToday.length === 1 ? "Eintrag" : "Einträge"
                       }`}
                     </IonText>{" "}
                     lernen.
                   </p>
-                  {entriesToday.length > entriesNow.length && (
+                  {entriesToday.length > 0 && (
                     <p>
-                      Es sind noch weitere{" "}
+                      Davon ist nächste Eintrag für{" "}
                       <IonText color="primary">
-                        {`${entriesToday.length} ${
-                          entriesToday.length === 1 ? "Eintrag" : "Einträge"
-                        }`}
+                        {new Date(entriesToday[0].date).getUTCHours()}:
+                        {new Date(entriesToday[0].date).getUTCMinutes()}
                       </IonText>{" "}
-                      für den heutigen Tag geplant.
+                      geplant.
                     </p>
                   )}
                 </section>
