@@ -1,3 +1,15 @@
+# 2.0.0
+
+## Neuerungen
+
+- Discite nutzt nun einen modifizierten SM-2 Algorithmus für die Berechnung der Wiederholungen.
+
+## Verbesserungen
+
+- Die interne Datenbankstruktur wurde verändert.
+  - Um Daten aus der Version 1 zu importieren, findet sich eine Option in Einstellungen.
+  - Performance-Verbesserungen
+
 # 1.2.0
 
 ## Neuerungen
