@@ -78,7 +78,7 @@ const VocabCollectionCard: React.FC<{
               >
                 <IonIcon icon={trash} slot="icon-only" size="small" />
               </IonButton>
-              {!isPlatform("capacitor") && (
+              {!isPlatform("android") && (
                 <IonButton
                   className="buttonClear"
                   onClick={share}

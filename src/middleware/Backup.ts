@@ -3,6 +3,7 @@ import {
   FilesystemDirectory,
   FilesystemEncoding,
 } from "@capacitor/core";
+import { FileOpener } from "@ionic-native/file-opener";
 import { isPlatform } from "@ionic/react";
 
 import VocabCollection from "../classes/VocabCollection";
@@ -43,16 +44,27 @@ export const downloadFile = (
   fileName: string,
   fileType: string
 ) => {
-  const blob = new Blob([data], { type: fileType });
-  const mouseEvent = document.createEvent("MouseEvents");
-  const a = document.createElement("a");
+  if (isPlatform("ios")) {
+    Filesystem.writeFile({
+      path: fileName,
+      data: data,
+      directory: FilesystemDirectory.Documents,
+      encoding: FilesystemEncoding.UTF8,
+    }).then((result) => {
+      FileOpener.showOpenWithDialog(result.uri, fileType);
+    });
+  } else {
+    const blob = new Blob([data], { type: fileType });
+    const mouseEvent = document.createEvent("MouseEvents");
+    const a = document.createElement("a");
 
-  a.download = fileName;
-  a.href = window.URL.createObjectURL(blob);
-  a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
+    a.download = fileName;
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
 
-  mouseEvent.initEvent("click");
-  a.dispatchEvent(mouseEvent);
+    mouseEvent.initEvent("click");
+    a.dispatchEvent(mouseEvent);
+  }
 };
 
 /**
@@ -76,12 +88,18 @@ export const saveBackup = async () => {
             encoding: FilesystemEncoding.UTF8,
           })
             .then((result) => {
-              resolve(
-                `Das Backup wurde gespeichert: „${result.uri.replace(
-                  "file://",
-                  ""
-                )}“`
-              );
+              if (isPlatform("ios")) {
+                // Dialog zum speichern der Datei.
+                FileOpener.showOpenWithDialog(result.uri, "application/json");
+                resolve("Das Backup steht bereit.");
+              } else {
+                resolve(
+                  `Das Backup wurde gespeichert: „${result.uri.replace(
+                    "file://",
+                    ""
+                  )}“`
+                );
+              }
             })
             .catch((reason) => {
               reject(reason);
