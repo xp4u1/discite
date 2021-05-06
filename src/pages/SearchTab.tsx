@@ -13,7 +13,9 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  isPlatform,
 } from "@ionic/react";
+import { Plugins } from "@capacitor/core";
 
 import "./SearchTab.sass";
 import DictionaryEntry from "../classes/DictionaryEntry";
@@ -25,6 +27,7 @@ import JoyrideTour from "../components/JoyrideTour";
 import { tours } from "../classes/Tours";
 
 const { useState } = React;
+const { Keyboard } = Plugins;
 
 const SearchTab: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -38,6 +41,8 @@ const SearchTab: React.FC = () => {
     ).then((response) => {
       setEntries(response);
       setShowEntries(true);
+
+      if (isPlatform("capacitor")) Keyboard.hide();
     });
   };
 
@@ -69,6 +74,7 @@ const SearchTab: React.FC = () => {
                   onIonChange={handleChange}
                   placeholder="facere"
                   type="text"
+                  enterkeyhint="search"
                   required
                 />
               </IonItem>
