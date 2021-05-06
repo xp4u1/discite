@@ -42,6 +42,7 @@ export const calculate = async (
 export const humanDifference = (date: number) => {
   const diff = Math.round((date - new Date().getTime()) / 1000 / 60);
 
+  if (diff <= 0) return "Jetzt";
   if (diff < 1) return "< 1 min";
   if (diff < 60) return `${diff} min`;
   if (diff < 1440) return `${Math.round(diff / 60)}h`;

@@ -29,6 +29,7 @@ import {
   endTomorrowTimestamp,
   startTomorrowTimestamp,
 } from "../middleware/Calendar";
+import { humanDifference } from "../middleware/Scheduler";
 
 const { useEffect, useState } = React;
 
@@ -115,12 +116,10 @@ const LearnTab: React.FC = () => {
                   </p>
                   {entriesToday.length > 0 && (
                     <p>
-                      Davon ist nächste Eintrag für{" "}
+                      Nächster Eintrag:{" "}
                       <IonText color="primary">
-                        {new Date(entriesToday[0].date).getHours()}:
-                        {new Date(entriesToday[0].date).getMinutes()}
+                        {humanDifference(entriesToday[0].date)}
                       </IonText>{" "}
-                      geplant.
                     </p>
                   )}
                 </section>
