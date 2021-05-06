@@ -117,8 +117,8 @@ const LearnTab: React.FC = () => {
                     <p>
                       Davon ist nächste Eintrag für{" "}
                       <IonText color="primary">
-                        {new Date(entriesToday[0].date).getUTCHours()}:
-                        {new Date(entriesToday[0].date).getUTCMinutes()}
+                        {new Date(entriesToday[0].date).getHours()}:
+                        {new Date(entriesToday[0].date).getMinutes()}
                       </IonText>{" "}
                       geplant.
                     </p>
