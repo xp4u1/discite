@@ -1,3 +1,18 @@
+# 2.1.0
+
+## Neuerungen
+
+- iOS/iPadOS wird nun offiziell unterstützt.
+
+## Verbesserungen
+
+- Die Tastatur in der Wörterbuchsuche schließt sich jetzt automatisch, wenn man den Suchbegriff eingetippt und abgesendet hat.
+- Der Wechsel zwischen hellen und dunklem Theme ist nun auf vielen Geräten flüssiger.
+
+## Behobene Bugs
+
+- Die falschen Uhrzeiten im Lernen-Tab wurden behoben.
+
 # 2.0.1
 
 ## Behobene Bugs
