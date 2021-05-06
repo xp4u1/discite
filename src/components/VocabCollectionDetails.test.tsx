@@ -22,7 +22,7 @@ test("renders all important informations", () => {
   ).toBeDefined();
 
   demoVocabCollection.indexCards.forEach((indexCard) => {
-    expect(getByText(indexCard.content.word)).toBeDefined();
+    expect(getByText(indexCard.word)).toBeDefined();
   });
 });
 

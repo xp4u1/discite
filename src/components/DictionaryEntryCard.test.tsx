@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import DictionaryEntryCard from "./DictionaryEntryCard";
 import { demoIndexCards } from "../test/demo";
 
-describe.each(demoIndexCards.map((indexCard) => indexCard.content))(
+describe.each(demoIndexCards.map((indexCard) => indexCard))(
   "renders %p",
   (dictionaryEntry) => {
     test("renders without crashing", () => {
@@ -22,9 +22,7 @@ describe.each(demoIndexCards.map((indexCard) => indexCard.content))(
 
       expect(getByText(dictionaryEntry.word)).toBeInTheDocument();
       expect(getByText(dictionaryEntry.description)).toBeInTheDocument();
-      expect(
-        getByText(dictionaryEntry.principal_forms.join(", "))
-      ).toBeInTheDocument();
+      expect(getByText(dictionaryEntry.forms.join(", "))).toBeInTheDocument();
     });
 
     test("renders all meanings", () => {

@@ -80,7 +80,7 @@ const VocabCollectionDetails: React.FC<{
       date.setDate(date.getDate() + index);
 
       array.forEach((indexCard) => {
-        addCard(indexCard.content, date);
+        addCard(indexCard, date);
       });
     });
 
