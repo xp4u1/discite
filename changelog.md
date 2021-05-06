@@ -1,3 +1,9 @@
+# 2.0.1
+
+## Behobene Bugs
+
+- Man kann jetzt wieder Vokabeln aus einer Sammlung zum Langzeittrainer hinzufügen.
+
 # 2.0.0
 
 ## Neuerungen
