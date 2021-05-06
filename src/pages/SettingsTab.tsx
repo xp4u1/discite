@@ -9,6 +9,7 @@ import {
   IonModal,
   IonToast,
   IonToggle,
+  isPlatform,
 } from "@ionic/react";
 import {
   archiveOutline,
@@ -152,6 +153,8 @@ const SettingsTab: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (isPlatform("ios")) return;
+
     // Settings werden auch geändert.
     changeDarkMode(darkMode);
   }, [darkMode]);
@@ -173,14 +176,18 @@ const SettingsTab: React.FC = () => {
       <JoyrideTour tour={tours.settings} />
 
       <IonList className="editorList" lines="full">
-        <IonItemDivider>Aussehen</IonItemDivider>
-        <IonItem lines="none">
-          <IonLabel className="tourSettingsDarkMode">Darkmode</IonLabel>
-          <IonToggle
-            checked={darkMode}
-            onIonChange={(event) => setDarkMode(event.detail.checked)}
-          />
-        </IonItem>
+        {!isPlatform("ios") && (
+          <>
+            <IonItemDivider>Aussehen</IonItemDivider>
+            <IonItem lines="none">
+              <IonLabel className="tourSettingsDarkMode">Darkmode</IonLabel>
+              <IonToggle
+                checked={darkMode}
+                onIonChange={(event) => setDarkMode(event.detail.checked)}
+              />
+            </IonItem>
+          </>
+        )}
 
         <IonItemDivider>Wörterbuch</IonItemDivider>
         <IonItem>
