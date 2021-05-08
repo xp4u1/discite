@@ -42,9 +42,12 @@ Eine etwas längere Projektbeschreibung findet man hier: [Projektseite](https://
   <a href="https://play.google.com/store/apps/details?id=de.xp4u1.discite">
     <img alt="Get it on Google Play" src="./resources/badge/playstore.png" width="140">
   </a>
+  <a href="https://apps.apple.com/app/id1566607319">
+    <img alt="Download on the app store" src="./resources/badge/appstore.png" width="140">
+  </a>
   <a href="https://discite.hoerenz.com">
     <img alt="Launch PWA" src="./resources/badge/pwa.png" width="140">
-    </a>
+  </a>
 </div>
 
 <br />
