@@ -1,4 +1,4 @@
-<img src="./resources/playstore/promo.png" />
+<img src="./resources/github/promo.png" />
 
 <br/>
 
@@ -11,7 +11,7 @@
   <img alt="open source" src="https://img.shields.io/static/v1.svg?label=Open&message=Source&color=46a4b8&labelColor=3ac1d0&style=for-the-badge" />
 </a>
 <a href="#">
-  <img alt="license" src="https://img.shields.io/static/v1.svg?label=License&message=GPL-3.0&color=ae68cc&labelColor=6e4a7e&style=for-the-badge" />
+  <img alt="license" src="https://img.shields.io/static/v1.svg?label=License&message=AGPL-3.0&color=ae68cc&labelColor=6e4a7e&style=for-the-badge" />
 </a>
 <a href="https://discord.gg/7DKtGASpq4">
   <img alt="discord status" src="https://img.shields.io/discord/772839790453456916.svg?style=for-the-badge&logo=discord&logoColor=fff&labelColor=8fc965&color=419b5a" />
@@ -42,9 +42,12 @@ Eine etwas längere Projektbeschreibung findet man hier: [Projektseite](https://
   <a href="https://play.google.com/store/apps/details?id=de.xp4u1.discite">
     <img alt="Get it on Google Play" src="./resources/badge/playstore.png" width="140">
   </a>
+  <a href="https://apps.apple.com/app/id1566607319">
+    <img alt="Download on the app store" src="./resources/badge/appstore.png" width="140">
+  </a>
   <a href="https://discite.hoerenz.com">
     <img alt="Launch PWA" src="./resources/badge/pwa.png" width="140">
-    </a>
+  </a>
 </div>
 
 <br />
@@ -66,6 +69,4 @@ Man kann nun Discite im Browser unter der Adresse `localhost:3000` aufrufen.
 
 ## Screenshots
 
-![Sammlung](https://gblobscdn.gitbook.com/assets%2F-MKa-6M_vsgcMI7K20n-%2F-MRGJlh4AZVKZjh6wl7V%2F-MRGJqtRnU_UO8Hrtyy6%2Fsammlungen.png?alt=media&token=f3b3cbd5-1623-49d9-8fc2-f93a00e43ca8)
-
-![Lernmodi](https://gblobscdn.gitbook.com/assets%2F-MKa-6M_vsgcMI7K20n-%2F-MRGLG2Nge2iYsoonMrB%2F-MRGNHTd2GwrVO2qS8CE%2Flernen.png?alt=media&token=ddda2f27-4496-481f-91db-96ea85dce6a0)
+![Screenshots](./resources/github/screenshots-iphone.png)
