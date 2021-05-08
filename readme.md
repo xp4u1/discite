@@ -1,4 +1,4 @@
-<img src="./resources/playstore/promo.png" />
+<img src="./resources/github/promo.png" />
 
 <br/>
 
@@ -69,6 +69,4 @@ Man kann nun Discite im Browser unter der Adresse `localhost:3000` aufrufen.
 
 ## Screenshots
 
-![Sammlung](https://gblobscdn.gitbook.com/assets%2F-MKa-6M_vsgcMI7K20n-%2F-MRGJlh4AZVKZjh6wl7V%2F-MRGJqtRnU_UO8Hrtyy6%2Fsammlungen.png?alt=media&token=f3b3cbd5-1623-49d9-8fc2-f93a00e43ca8)
-
-![Lernmodi](https://gblobscdn.gitbook.com/assets%2F-MKa-6M_vsgcMI7K20n-%2F-MRGLG2Nge2iYsoonMrB%2F-MRGNHTd2GwrVO2qS8CE%2Flernen.png?alt=media&token=ddda2f27-4496-481f-91db-96ea85dce6a0)
+![Screenshots](./resources/github/screenshots-iphone.png)
