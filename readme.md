@@ -11,7 +11,7 @@
   <img alt="open source" src="https://img.shields.io/static/v1.svg?label=Open&message=Source&color=46a4b8&labelColor=3ac1d0&style=for-the-badge" />
 </a>
 <a href="#">
-  <img alt="license" src="https://img.shields.io/static/v1.svg?label=License&message=GPL-3.0&color=ae68cc&labelColor=6e4a7e&style=for-the-badge" />
+  <img alt="license" src="https://img.shields.io/static/v1.svg?label=License&message=AGPL-3.0&color=ae68cc&labelColor=6e4a7e&style=for-the-badge" />
 </a>
 <a href="https://discord.gg/7DKtGASpq4">
   <img alt="discord status" src="https://img.shields.io/discord/772839790453456916.svg?style=for-the-badge&logo=discord&logoColor=fff&labelColor=8fc965&color=419b5a" />
