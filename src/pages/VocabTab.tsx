@@ -14,7 +14,9 @@ import {
 import { add } from "ionicons/icons";
 
 import "./VocabTab.sass";
-import VocabCollection, { newCollection } from "../classes/VocabCollection";
+import VocabCollection, {
+  generateCollection,
+} from "../classes/VocabCollection";
 import VocabCollectionCard from "../components/VocabCollectionCard";
 import VocabCollectionDetails from "../components/VocabCollectionDetails";
 import DisciteTab from "../layouts/DisciteTab";
@@ -30,10 +32,8 @@ const VocabTab: React.FC = () => {
   >([]);
   const [query, setQuery] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [
-    selectedCollection,
-    setSelectedCollection,
-  ] = useState<VocabCollection>();
+  const [selectedCollection, setSelectedCollection] =
+    useState<VocabCollection>();
   const history = useHistory();
 
   onkeydown = (event) => {
@@ -80,7 +80,7 @@ const VocabTab: React.FC = () => {
   };
 
   const createCollection = () => {
-    database.collections.add(newCollection).then((id) => {
+    database.collections.add(generateCollection()).then((id) => {
       history.push(`/vocab/edit/${id}`);
     });
   };
