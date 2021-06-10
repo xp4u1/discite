@@ -68,7 +68,7 @@ const SearchTab: React.FC = () => {
         <IonCardContent>
           <form onSubmit={(event) => handleSubmit(event)}>
             <IonList>
-              <IonItem>
+              <IonItem className="searchQueryItem">
                 <IonLabel position="stacked">Begriff auf Latein</IonLabel>
                 <IonInput
                   onIonChange={handleChange}
