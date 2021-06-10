@@ -196,7 +196,7 @@ const IndexCardEditor: React.FC<{
               }
             />
           </IonItem>
-          <IonItem>
+          <IonItem lines="none">
             <IonTextarea
               value={indexCard.meanings.join("; ")}
               placeholder="Bedeutungen"
