@@ -3,6 +3,18 @@ import Dexie from "dexie";
 import DictionaryEntry from "../../classes/DictionaryEntry";
 import VocabCollection from "../../classes/VocabCollection";
 
+export interface ActivityEntry {
+  /**
+   * Unix-Zeitstempel des Tages.
+   * Es gibt für jedes Datum nur einen Eintrag!
+   */
+  date: number;
+  /**
+   * Anzahl der wiederholten Karten an diesem Tag.
+   */
+  count: number;
+}
+
 export interface LearnEntry {
   id?: number;
   content: DictionaryEntry;
@@ -33,6 +45,7 @@ export interface StatsEntry {
 }
 
 export class DisciteDatabase extends Dexie {
+  activity: Dexie.Table<ActivityEntry, number>;
   collections: Dexie.Table<VocabCollection, number>;
   learn: Dexie.Table<LearnEntry, number>;
   stats: Dexie.Table<StatsEntry, number>;
@@ -46,7 +59,11 @@ export class DisciteDatabase extends Dexie {
       learn: "++id, date, ease, graduated, relearning, step, lastInterval",
       stats: "++id, date, graduated, relearning, lastInterval, button",
     });
+    this.version(2).stores({
+      activity: "&date, count",
+    });
 
+    this.activity = this.table("activity");
     this.collections = this.table("collections");
     this.learn = this.table("learn");
     this.stats = this.table("stats");

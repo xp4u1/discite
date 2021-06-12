@@ -9,3 +9,19 @@ export const shuffle = (array: any[]): any[] => {
 
   return copy === array ? shuffle(array) : copy;
 };
+
+/**
+ * Gibt den Median von einem Array zurück.
+ * @param array Array, aus dem der Median berechnet werden soll
+ */
+export const median = (array: number[]) => {
+  const sorted = array.sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+
+  return sorted.length % 2 === 0
+    ? // Es gibt eine gerade Anzahl von Elementen;
+      // man nimmt den Mittelwert aus den beiden
+      // in der Mitte.
+      (sorted[middle] + sorted[middle + 1]) / 2
+    : sorted[middle];
+};
