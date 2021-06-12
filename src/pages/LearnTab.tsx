@@ -15,8 +15,6 @@ import {
   IonToast,
 } from "@ionic/react";
 import { layersOutline } from "ionicons/icons";
-import { LineChart } from "react-chartkick";
-import "chart.js";
 
 import "./LearnTab.sass";
 import DisciteTab from "../layouts/DisciteTab";
@@ -30,37 +28,12 @@ import {
   startTomorrowTimestamp,
 } from "../middleware/Calendar";
 import { humanDifference } from "../middleware/Scheduler";
+import DisciteCalendarHeatmap from "../components/DisciteCalendarHeatmap";
 
-const { useEffect, useState } = React;
-
-const getData = async () => {
-  const data: any[] = [];
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
-
-  for (let index = 0; index < (window.innerWidth >= 800 ? 7 : 5); index++) {
-    date.setDate(date.getDate() - 1);
-
-    const end = new Date(date.toJSON());
-    end.setHours(23, 59, 59, 999);
-
-    const entries = await database.stats
-      .where("date")
-      .between(date.getTime(), end.getTime())
-      .toArray();
-
-    data.push([
-      `${date.getUTCDate()}.${date.getUTCMonth() + 1}`,
-      entries.length,
-    ]);
-  }
-
-  return data.reverse();
-};
+const { useState } = React;
 
 const LearnTab: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
-  const [statsLearned, setStatsLearned] = useState<any[]>([]);
   const history = useHistory();
 
   const entriesToday = useLiveQuery(() =>
@@ -82,19 +55,15 @@ const LearnTab: React.FC = () => {
       ? history.push("/learn/daily")
       : setShowToast(true);
 
-  useEffect(() => {
-    getData().then(setStatsLearned);
-  }, []);
-
   if (!(entriesToday && entriesTomorrow && learnEntries)) return null;
 
   return (
     <DisciteTab title="Lernen" className="learnTab">
       <JoyrideTour tour={tours.learn} />
 
-      <IonGrid className="dateGrid">
+      <IonGrid className="learnGrid">
         <IonRow>
-          <IonCol className="dateCol tourLearnToday">
+          <IonCol className="learnCol tourLearnToday">
             <IonCard
               className={`dateCard ${
                 entriesToday.length > 0 ? "danger" : "success"
@@ -126,7 +95,7 @@ const LearnTab: React.FC = () => {
               </IonCardContent>
             </IonCard>
           </IonCol>
-          <IonCol className="dateCol tourLearnTomorrow">
+          <IonCol className="learnCol tourLearnTomorrow">
             <IonCard
               className={`dateCard ${
                 entriesTomorrow.length > 0 ? "danger" : "success"
@@ -151,27 +120,50 @@ const LearnTab: React.FC = () => {
             </IonCard>
           </IonCol>
         </IonRow>
+        <IonRow>
+          <IonCol id="heatmapCol" className="learnCol tourLearnStats">
+            <IonCard className="statsCard">
+              <IonCardHeader>
+                <IonCardTitle>Wiederholungen</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <DisciteCalendarHeatmap />
+              </IonCardContent>
+            </IonCard>
+          </IonCol>
+          <IonCol className="learnCol">
+            <IonCard className="statsCard">
+              <IonCardHeader>
+                <IonCardTitle>Dein Wortschatz</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <section>
+                  <p className="marginBottom">
+                    Deine Wörter:{" "}
+                    <IonText color="primary">{learnEntries.length}</IonText>
+                  </p>
+                  <p>
+                    Neu:{" "}
+                    {
+                      learnEntries.filter(
+                        (entry) => !entry.graduated && !entry.relearning
+                      ).length
+                    }
+                  </p>
+                  <p>
+                    Neu-Lernen:{" "}
+                    {learnEntries.filter((entry) => entry.relearning).length}
+                  </p>
+                  <p>
+                    Andere:{" "}
+                    {learnEntries.filter((entry) => entry.graduated).length}
+                  </p>
+                </section>
+              </IonCardContent>
+            </IonCard>
+          </IonCol>
+        </IonRow>
       </IonGrid>
-
-      <IonCard className="tourLearnStats">
-        <IonCardHeader>
-          <IonCardTitle>Wiederholungen</IonCardTitle>
-        </IonCardHeader>
-        <IonCardContent>
-          <LineChart data={statsLearned} />
-        </IonCardContent>
-      </IonCard>
-
-      <IonCard>
-        <IonCardHeader>
-          <IonCardTitle>Dein Wortschatz</IonCardTitle>
-        </IonCardHeader>
-        <IonCardContent>
-          <section>
-            <p>Deine Wörter: {learnEntries.length}</p>
-          </section>
-        </IonCardContent>
-      </IonCard>
 
       <IonFab
         vertical="bottom"
@@ -187,7 +179,7 @@ const LearnTab: React.FC = () => {
       <IonToast
         isOpen={showToast}
         onDidDismiss={() => setShowToast(false)}
-        message="Du musst heute keine Vokabeln lernen!"
+        message="Du musst zurzeit keine Vokabeln lernen!"
         color="danger"
         duration={1000}
       />

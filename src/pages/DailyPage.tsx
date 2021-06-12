@@ -10,6 +10,7 @@ import { LearnEntry } from "../middleware/database/DisciteDatabase";
 import { database, getSetting } from "../middleware/Storage";
 import { calculate, humanDifference } from "../middleware/Scheduler";
 import { defaultPreStudy, defaultShowTimespan } from "../middleware/Defaults";
+import dayjs from "dayjs";
 
 const { useState, useEffect } = React;
 
@@ -17,14 +18,13 @@ const DailyPage: React.FC = () => {
   const [queue, setQueue] = useState<LearnEntry[]>([]);
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [showTimespan, setShowTimespan] = useState<boolean>(
-    defaultShowTimespan
-  );
+  const [showTimespan, setShowTimespan] =
+    useState<boolean>(defaultShowTimespan);
   const [intervals, setIntervals] = useState<string[]>([]);
   const history = useHistory();
 
   const finish = () => {
-    history.push("/learn");
+    history.replace("/learn");
   };
 
   const handleClick = async (button: number) => {
@@ -38,6 +38,20 @@ const DailyPage: React.FC = () => {
       graduated: queue[0].graduated,
       lastInterval: queue[0].lastInterval,
       relearning: queue[0].relearning,
+    });
+
+    const startOfToday = +dayjs(Date.now()).startOf("day");
+    database.activity.get({ date: startOfToday }).then((result) => {
+      if (result)
+        database.activity.put({
+          ...result,
+          count: result.count + 1,
+        });
+      else
+        database.activity.add({
+          date: startOfToday,
+          count: 1,
+        });
     });
 
     setQueue(queue.slice(1));

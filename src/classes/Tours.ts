@@ -33,6 +33,52 @@ export const tours = {
       },
     ],
   },
+  advancedSettings: {
+    name: "tour-advanced-settings",
+    steps: [
+      {
+        target: ".tourIntro",
+        title: "Warnung",
+        content:
+          "Bitte ändere diese Einstellungen nur, wenn du dich mit der Funktionsweise des SM-2 Algorithmus befasst hast. Im Internet gibt es gute Erklärvideos, wie man Anki konfiguriert. Die Inhalte dort lassen sich aufgrund der ähnlichen Implementation des Algorithmus auch auf Discite anwenden.",
+      },
+      {
+        target: ".tourCardsPerDay",
+        content:
+          "Wenn du bei einer Sammlung auf „Lernen“ klickst, werden die Karten auf die nächsten Tage aufgeteilt. Diese Einstellung ändert die maximale Anzahl von neuen Karten pro Tag.",
+      },
+      {
+        target: ".tourLearnIntervals",
+        content:
+          "Wenn eine Karte neu ist, muss sie diese Intervalle durchlaufen, um als „absolviert“ zu gelten. Die Intervalle müssen in Minuten angegeben und mit Leerzeichen getrennt werden.",
+      },
+      {
+        target: ".tourEaseFactor",
+        content:
+          "Startwert des „ease factors“ einer neuen Karte. Der Wert muss mit einem Dezimalpunkt angegeben werden.",
+      },
+      {
+        target: ".tourIntervalModifier",
+        content:
+          "Beim berechnen des Intervalls für eine Karte (nicht Lernen/Neu-Lernen) wird der neue Intervall mit diesem Faktor multipliziert. Er darf nicht ≤ 0 sein.",
+      },
+      {
+        target: ".tourPreLearning",
+        content:
+          "Nachdem man alle Karten durchgegangen ist, werden stan­dard­mä­ßig die Karten der nächsten 20 min angezeigt, damit man diese im Anschluss gleich weiter durchgehen kann. Um diese Funktion auszustellen, kann man diesen Wert auf 0 (Minuten) setzen.",
+      },
+      {
+        target: ".tourRelearningInterval",
+        content:
+          "Eine Karte, die als Neu-Lernen markiert wurde, wird in diesem Intervall immer wieder angezeigt, bis man wieder mit „Gut“ antwortet.",
+      },
+      {
+        target: ".tourRelearningModifier",
+        content:
+          "Wenn eine Karte wieder fertig neu gelernt wurde, wird der neue Intervall stan­dard­mä­ßig nur noch mit 70 % des alten Intervalls berechnet.",
+      },
+    ],
+  },
   dictionary: {
     name: "tour-dictionary",
     steps: [

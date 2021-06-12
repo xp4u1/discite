@@ -27,6 +27,8 @@ import {
   defaultRelearningInterval,
   defaultRelearningModifier,
 } from "../middleware/Defaults";
+import JoyrideTour from "./JoyrideTour";
+import { tours } from "../classes/Tours";
 
 const { useEffect, useState } = React;
 
@@ -100,6 +102,8 @@ const AdvancedSettingsModal: React.FC = () => {
 
   return (
     <>
+      <JoyrideTour tour={tours.advancedSettings} />
+
       <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
@@ -107,14 +111,14 @@ const AdvancedSettingsModal: React.FC = () => {
               <IonIcon icon={close} />
             </IonButton>
           </IonButtons>
-          <IonTitle>Erweiterte Einstellungen</IonTitle>
+          <IonTitle class="tourIntro">Erweiterte Einstellungen</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen class="advancedSettingsModal">
         <IonList lines="full">
           <IonItemDivider>Neue Sammlung</IonItemDivider>
           <IonItem lines="none">
-            <IonLabel>Karten pro Tag</IonLabel>
+            <IonLabel class="tourCardsPerDay">Karten pro Tag</IonLabel>
             <IonInput
               value={maxNewCards}
               onIonChange={(event) => setMaxNewCards(event.detail.value!)}
@@ -123,14 +127,14 @@ const AdvancedSettingsModal: React.FC = () => {
 
           <IonItemDivider>Lernphase</IonItemDivider>
           <IonItem>
-            <IonLabel>Intervalle</IonLabel>
+            <IonLabel class="tourLearnIntervals">Intervalle</IonLabel>
             <IonInput
               value={learnIntervals}
               onIonChange={(event) => setLearnIntervals(event.detail.value!)}
             />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>Ease-Faktor</IonLabel>
+            <IonLabel class="tourEaseFactor">Ease-Faktor</IonLabel>
             <IonInput
               value={ease}
               onIonChange={(event) => setEase(event.detail.value!)}
@@ -138,15 +142,15 @@ const AdvancedSettingsModal: React.FC = () => {
           </IonItem>
 
           <IonItemDivider>Wiederholungen</IonItemDivider>
-          <IonItem lines="none">
-            <IonLabel>Intervallfaktor</IonLabel>
+          <IonItem>
+            <IonLabel class="tourIntervalModifier">Intervallfaktor</IonLabel>
             <IonInput
               value={intervalModifier}
               onIonChange={(event) => setIntervalModifier(event.detail.value!)}
             />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>Vorlernen (min)</IonLabel>
+            <IonLabel class="tourPreLearning">Vorlernen (min)</IonLabel>
             <IonInput
               value={preStudy}
               onIonChange={(event) => setPreStudy(event.detail.value!)}
@@ -155,7 +159,7 @@ const AdvancedSettingsModal: React.FC = () => {
 
           <IonItemDivider>Neu-Lernen</IonItemDivider>
           <IonItem>
-            <IonLabel>Intervall</IonLabel>
+            <IonLabel class="tourRelearningInterval">Intervall</IonLabel>
             <IonInput
               value={relearningInterval}
               onIonChange={(event) =>
@@ -164,7 +168,7 @@ const AdvancedSettingsModal: React.FC = () => {
             />
           </IonItem>
           <IonItem lines="none">
-            <IonLabel>Neues Intervall</IonLabel>
+            <IonLabel class="tourRelearningModifier">Neues Intervall</IonLabel>
             <IonInput
               value={relearningModifier}
               onIonChange={(event) =>

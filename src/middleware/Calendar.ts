@@ -39,3 +39,15 @@ export const endTomorrowTimestamp = (): number => {
 
   return date.getTime();
 };
+
+/**
+ * Verschiebt ein Datum um eine bestimmte Anzahl von Tagen.
+ * @param date Datum, das verändert werden soll
+ * @param days Anzahl der Tage
+ */
+export const shiftDate = (date: Date, days: number): Date => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + days);
+
+  return newDate;
+};

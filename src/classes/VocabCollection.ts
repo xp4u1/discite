@@ -31,11 +31,13 @@ const randomBackgroundImage = (): string => {
   return `/assets/images/bg-${Math.floor(Math.random() * 4)}.png`;
 };
 
-export const newCollection: VocabCollection = {
-  title: "Neue Sammlung",
-  subtitle: "",
-  description: "",
-  image: randomBackgroundImage(),
-  indexCards: [],
-  lastLearnt: Date.now(),
+export const generateCollection = (): VocabCollection => {
+  return {
+    title: "Neue Sammlung",
+    subtitle: "",
+    description: "",
+    image: randomBackgroundImage(),
+    indexCards: [],
+    lastLearnt: Date.now(),
+  };
 };

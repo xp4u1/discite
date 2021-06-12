@@ -18,7 +18,9 @@ import { trash, create } from "ionicons/icons";
 import { useParams } from "react-router";
 
 import "./EditPage.sass";
-import VocabCollection, { newCollection } from "../classes/VocabCollection";
+import VocabCollection, {
+  generateCollection,
+} from "../classes/VocabCollection";
 import IndexCardEditor from "../components/IndexCardEditor";
 import DiscitePage from "../layouts/DiscitePage";
 import { database } from "../middleware/Storage";
@@ -27,7 +29,9 @@ import DictionaryEntry from "../classes/DictionaryEntry";
 const { useEffect, useState } = React;
 
 const EditPage: React.FC = () => {
-  const [collection, setCollection] = useState<VocabCollection>(newCollection);
+  const [collection, setCollection] = useState<VocabCollection>(
+    generateCollection()
+  );
   const [selectedIndexCard, selectIndexCard] = useState<DictionaryEntry>();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);

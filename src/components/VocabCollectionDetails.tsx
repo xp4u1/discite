@@ -123,10 +123,10 @@ const VocabCollectionDetails: React.FC<{
               )}
             </IonNote>
           </IonItem>
-          <IonItem button detail className="item">
+          <IonItem button detail>
             <IonLabel onClick={edit}>Bearbeitungsmodus</IonLabel>
           </IonItem>
-          <IonItem button detail className="item">
+          <IonItem button detail>
             <IonLabel onClick={overview}>Karteikarten-Übersicht</IonLabel>
           </IonItem>
         </IonList>

@@ -37,6 +37,8 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.scss";
 
+import "./theme/global.scss";
+
 /* Custom components & pages */
 import VocabTab from "./pages/VocabTab";
 import SearchTab from "./pages/SearchTab";
