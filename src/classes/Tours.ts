@@ -107,7 +107,7 @@ export const tours = {
         target: ".tourLearnStats",
         title: "Statistiken",
         content:
-          "Discite merkt sich, wann du lernst. Hier siehst du eine Übersicht der letzten sieben Tage.",
+          "Discite merkt sich, wann du lernst. Mit der Kalenderansicht hilft dir die App, leichter den Überblick zu behalten.",
       },
       {
         target: ".tourLearnVocabulary",
