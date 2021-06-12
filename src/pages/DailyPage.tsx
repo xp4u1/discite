@@ -24,7 +24,7 @@ const DailyPage: React.FC = () => {
   const history = useHistory();
 
   const finish = () => {
-    history.push("/learn");
+    history.replace("/learn");
   };
 
   const handleClick = async (button: number) => {
