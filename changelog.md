@@ -1,3 +1,14 @@
+# 2.2.0
+
+## Neuerungen
+
+- Im Lernen-Tab ist nun eine Kalender-Heatmap für Wiederholungen zu finden.
+
+## Verbesserungen
+
+- Stabilität von Discite wurde verbessert.
+- Viele kleine Bugs wurden behoben.
+
 # 2.1.0
 
 ## Neuerungen
