@@ -1,3 +1,13 @@
+# 2.3.0
+
+## Neuerungen
+
+- Mit dem Datenbank-Editor kann nun seine Karten im Langzeittrainer bearbeiten.
+
+## Behobene Bugs
+
+- Wenn man absolvierte Karten neu lernt, werden jetzt keine falschen Auswahlmöglichkeiten mehr angezeigt.
+
 # 2.2.0
 
 ## Neuerungen
