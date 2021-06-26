@@ -154,10 +154,17 @@ const LearnTab: React.FC = () => {
                     Neu-Lernen:{" "}
                     {learnEntries.filter((entry) => entry.relearning).length}
                   </p>
-                  <p>
+                  <p className="marginBottom">
                     Andere:{" "}
                     {learnEntries.filter((entry) => entry.graduated).length}
                   </p>
+                  <IonText
+                    color="primary"
+                    className="click"
+                    onClick={() => history.push("/learn/database")}
+                  >
+                    <p>Datenbank bearbeiten</p>
+                  </IonText>
                 </section>
               </IonCardContent>
             </IonCard>

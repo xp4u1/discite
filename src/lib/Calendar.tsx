@@ -131,7 +131,7 @@ export default class GitHubCalendar extends React.Component<Props, State> {
             fill: "#AAA",
           }}
           x={textBasePos.x - this.panelSize / 2 - 4}
-          y={textBasePos.y + this.panelSize / 2 + 3}
+          y={textBasePos.y + this.panelSize / 2 + 1}
           textAnchor={"middle"}
         >
           {this.props.weekNames[i]}

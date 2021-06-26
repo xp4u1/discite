@@ -48,6 +48,7 @@ import SettingsTab from "./pages/SettingsTab";
 import OverviewPage from "./pages/OverviewPage";
 import LearnTab from "./pages/LearnTab";
 import DailyPage from "./pages/DailyPage";
+import DatabasePage from "./pages/DatabasePage";
 
 setupConfig({
   mode: "ios",
@@ -68,6 +69,7 @@ const App: React.FC = () => (
 
           <Route path="/learn" component={LearnTab} exact />
           <Route path="/learn/daily" component={DailyPage} />
+          <Route path="/learn/database" component={DatabasePage} />
 
           <Route path="/" render={() => <Redirect to="/search" />} exact />
         </IonRouterOutlet>

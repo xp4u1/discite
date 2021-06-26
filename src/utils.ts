@@ -22,6 +22,6 @@ export const median = (array: number[]) => {
     ? // Es gibt eine gerade Anzahl von Elementen;
       // man nimmt den Mittelwert aus den beiden
       // in der Mitte.
-      (sorted[middle] + sorted[middle + 1]) / 2
+      (sorted[middle] + sorted[middle - 1]) / 2
     : sorted[middle];
 };

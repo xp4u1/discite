@@ -20,6 +20,8 @@ import { bug, school } from "ionicons/icons";
 import DictionaryEntry from "../classes/DictionaryEntry";
 import "./DictionaryEntryCard.sass";
 import { addCard } from "../middleware/Scheduler";
+import { useLiveQuery } from "dexie-react-hooks";
+import { database } from "../middleware/Storage";
 
 const { useState } = React;
 
@@ -28,6 +30,14 @@ const DictionaryEntryCard: React.FC<{
   actionButtons?: boolean;
 }> = (props) => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
+
+  const learnEntries = useLiveQuery(() =>
+    database.learn
+      .filter((entry) => entry.content.word === props.dictionaryEntry.word)
+      .toArray()
+  );
+
+  if (!learnEntries) return null;
 
   return (
     <IonCard className="dictionaryEntryCard">
@@ -86,9 +96,15 @@ const DictionaryEntryCard: React.FC<{
       <IonAlert
         isOpen={showAlert}
         onDidDismiss={() => setShowAlert(false)}
-        header={"Willst du diesen Eintrag lernen?"}
+        header={
+          learnEntries.length === 0
+            ? "Willst du diesen Eintrag lernen?"
+            : "Vorsicht!"
+        }
         message={
-          "Diese Aktion <strong>nicht rückgängig</strong> gemacht werden"
+          learnEntries.length === 0
+            ? "Diese Aktion <strong>nicht rückgängig</strong> gemacht werden"
+            : "Es existiert bereits ein Eintrag zu diesem Wort. Möchtest du den Eintrag dennoch hinzufügen?"
         }
         buttons={[
           {
