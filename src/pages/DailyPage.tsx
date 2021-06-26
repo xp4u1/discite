@@ -126,7 +126,7 @@ const DailyPage: React.FC = () => {
               </IonRow>
             )}
             {/* Graduated */}
-            {showSolution && queue[0].graduated && (
+            {showSolution && queue[0].graduated && !queue[0].relearning && (
               <>
                 <IonRow className="ion-justify-content-evenly">
                   <IonCol>
