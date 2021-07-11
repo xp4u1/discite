@@ -31,9 +31,9 @@
 
 ## Was ist Discite?
 
-Viele Vokabel- und Karteikartenapps bieten nicht das, was man zum effektiven Lernen von Latein braucht. Sie können meist die Stammformen der Wörter nicht mit aufnehmen. Discite ist genau für diesen Anwendungszweck optimiert: Die App zeigt Stammformen, Konjugationen, Deklinationen etc. an und hat einen smarten Karteikarteneditor, der das eingegebene Wort erkennt und automatisch die Felder für Stammformen, Bedeutungen und vieles mehr ausfüllt und einem die Tipparbeit am Smartphone erspart.
+Viele Vokabel- und Karteikartenapps bieten nicht das, was man zum effektiven Lernen von Latein braucht. Sie können meist die Stammformen der Wörter nicht mit aufnehmen. Discite ist genau für diesen Anwendungszweck optimiert: Die App zeigt Stammformen, Konjugationen, Deklinationen etc. an und hat einen smarten Karteikarten-Editor, der das eingegebene Wort erkennt und automatisch die Felder für Stammformen, Bedeutungen und vieles mehr ausfüllt und einem die Tipparbeit am Smartphone erspart.
 
-Eine ausführliche Anleitung und Dokumentation findet man hier: [Discite Gitbook](https://xp4u1.gitbook.io/discite) \
+Eine ausführliche Anleitung und Dokumentation findet man hier: [Discite](https://www.craft.do/s/3kweqFq2F1jjpf) \
 Eine etwas längere Projektbeschreibung findet man hier: [Projektseite](https://paul.hoerenz.com/project/discite)
 
 ## Installation
