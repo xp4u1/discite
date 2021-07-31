@@ -1,3 +1,10 @@
+# 2.4.0
+
+## Neuerungen
+
+- Das Wörterbuch unterstützt nun Phrasen.
+- Discite nutzt nun den neuen API-Endpunkt (GraphQL).
+
 # 2.3.0
 
 ## Neuerungen

@@ -1,21 +1,55 @@
-import axios from "axios";
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import DictionaryEntry from "../classes/DictionaryEntry";
 
-interface SearchEntry {
+interface Word {
+  humanWord: string;
+  humanForms: string[];
   description: string;
-  european: string;
-  form: string;
   meanings: string[];
-  phrases: string[];
-  principal_forms: string[];
+  shortMeanings: string[];
+  european: string;
+  phrases: Phrase[];
   word: string;
+  forms: string[];
 }
 
-interface Response {
-  entries: SearchEntry[];
+interface Phrase {
+  latin: string;
+  german: string;
 }
 
-const serverUrl = "https://paul.hoerenz.com";
+const client = new ApolloClient({
+  uri: "https://paul.hoerenz.com/api",
+  cache: new InMemoryCache(),
+});
+
+const SEARCH_DICTIONARY_ENTRY = gql`
+  query Search($word: String!) {
+    search(query: $word) {
+      humanWord
+      humanForms
+      description
+      meanings
+      shortMeanings
+      european
+    }
+  }
+`;
+
+const SEARCH_PHRASES = gql`
+  query Search($word: String!) {
+    search(query: $word) {
+      humanWord
+      humanForms
+      description
+      european
+      phrases {
+        german
+        latin
+      }
+    }
+  }
+`;
 
 /**
  * Sucht im Wörterbuch nach einem Wort.
@@ -30,25 +64,46 @@ const serverUrl = "https://paul.hoerenz.com";
  * nur mit eine kurzen Liste der Bedeutungen angezeigt.
  *
  * @param query Wort, das gesucht werden soll.
- * @param school Bei `true` wird eine gekürzte Version der Bedeutungen geliefert.
+ * @param shortMeanings Bei `true` wird eine gekürzte Version der Bedeutungen geliefert.
  */
 export const searchDictionary = async (
   query: string,
-  school: boolean = false
-) => {
-  let url = `${serverUrl}/api/dictionary/search?word=${query}`;
-  if (school) url += "&onlySchool";
+  shortMeanings: boolean = false
+): Promise<DictionaryEntry[]> => {
+  const data: Word[] = (
+    await client.query({
+      query: SEARCH_DICTIONARY_ENTRY,
+      variables: {
+        word: query,
+      },
+    })
+  ).data.search;
 
-  const response = await axios.get(url);
+  return data.map((word) => ({
+    word: word.humanWord,
+    forms: word.humanForms,
+    description: word.description,
+    european: word.european,
+    meanings: shortMeanings ? word.shortMeanings : word.meanings,
+  }));
+};
 
-  return (response.data as Response).entries.map(
-    (searchEntry) =>
-      ({
-        description: searchEntry.description,
-        european: searchEntry.form,
-        forms: searchEntry.principal_forms,
-        meanings: searchEntry.meanings,
-        word: searchEntry.word,
-      } as DictionaryEntry)
-  );
+/**
+ * Sucht im Wörterbuch nach Phrasen zu einem Wort.
+ *
+ * @param query Wort, das gesucht werden soll.
+ */
+export const searchDictionaryPhrases = async (
+  query: string
+): Promise<Word[]> => {
+  const data: Word[] = (
+    await client.query({
+      query: SEARCH_PHRASES,
+      variables: {
+        word: query,
+      },
+    })
+  ).data.search;
+
+  return data;
 };

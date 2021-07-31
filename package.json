@@ -1,8 +1,9 @@
 {
   "name": "discite",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.3.21",
     "@capacitor/android": "^2.4.2",
     "@capacitor/core": "2.4.7",
     "@capacitor/ios": "^2.4.7",
@@ -20,6 +21,7 @@
     "dayjs": "^1.10.5",
     "dexie": "^3.1.0-alpha.8",
     "dexie-react-hooks": "^1.0.6",
+    "graphql": "^15.5.1",
     "ionicons": "^5.4.0",
     "npm-check-updates": "^9.1.2",
     "react": "^17.0.0",

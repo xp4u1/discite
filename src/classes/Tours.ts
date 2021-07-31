@@ -88,6 +88,11 @@ export const tours = {
         content:
           "In diesem Wörterbuch brauchst du nicht lange blättern, um das Wort zu finden, welches dir gerade Probleme bereitet. Du musst es einfach nur eintippen und los geht die Suche.\n(Für dieses Feature wird eine aktive Internetverbindung benötigt)",
       },
+      {
+        target: ".tourDictionaryPhrase",
+        content:
+          "Du kannst nicht nur nach Bedeutungen des Wortes suchen, sondern auch nach Bedeutungen in Verbindung mit anderen Wörtern, sogenannten Phrasen.",
+      },
     ],
   },
   learn: {
