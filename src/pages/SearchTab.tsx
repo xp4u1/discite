@@ -84,7 +84,7 @@ const SearchTab: React.FC = () => {
 
       <IonCard className="inputCard tourDictionaryIntro">
         <IonCardHeader>
-          <IonCardSubtitle>Suche/Formenanalyse</IonCardSubtitle>
+          <IonCardSubtitle>Bedeutungen und Formen</IonCardSubtitle>
           <IonCardTitle>Wörterbuch</IonCardTitle>
         </IonCardHeader>
         <IonCardContent>
@@ -116,6 +116,7 @@ const SearchTab: React.FC = () => {
                     disabled={query === ""}
                     expand="block"
                     color="light"
+                    className="tourDictionaryPhrase"
                     onClick={() => searchPhrases(query)}
                   >
                     Phrasen
