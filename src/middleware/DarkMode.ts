@@ -1,9 +1,7 @@
 import { isPlatform } from "@ionic/react";
-import { KeyboardStyle, Plugins } from "@capacitor/core";
+import { Keyboard, KeyboardStyle } from "@capacitor/keyboard";
 
 import { getSetting, setSetting } from "./Storage";
-
-const { Keyboard } = Plugins;
 
 export const changeDarkMode = (darkMode: boolean) => {
   setSetting("darkMode", darkMode);

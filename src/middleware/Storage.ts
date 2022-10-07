@@ -1,6 +1,5 @@
-import { Plugins } from "@capacitor/core";
+import { Storage } from "@capacitor/storage";
 import { DisciteDatabase } from "./database/DisciteDatabase";
-const { Storage } = Plugins;
 
 /**
  * Speichert einen Wert im Speicher.

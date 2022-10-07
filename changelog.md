@@ -1,3 +1,9 @@
+# 2.5.0
+
+## Verbesserungen
+
+- (Fast) alle Abhängigkeiten wurden aktualisiert. 
+
 # 2.4.0
 
 ## Neuerungen

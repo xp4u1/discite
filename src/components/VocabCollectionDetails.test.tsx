@@ -1,5 +1,6 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
+import "fake-indexeddb/auto";
 
 import { demoVocabCollection } from "../test/demo";
 import VocabCollectionDetails, { chunk } from "./VocabCollectionDetails";
@@ -11,7 +12,7 @@ test("renders without crashing", () => {
   expect(baseElement).toBeDefined();
 });
 
-test("renders all important informations", () => {
+test("renders all important information", () => {
   const { getByText } = render(
     <VocabCollectionDetails vocabCollection={demoVocabCollection} />
   );
