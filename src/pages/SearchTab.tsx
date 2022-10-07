@@ -15,7 +15,7 @@ import {
   IonCol,
   isPlatform,
 } from "@ionic/react";
-import { Plugins } from "@capacitor/core";
+import { Keyboard } from "@capacitor/keyboard";
 
 import "./SearchTab.sass";
 import DictionaryEntry from "../classes/DictionaryEntry";
@@ -30,7 +30,6 @@ import JoyrideTour from "../components/JoyrideTour";
 import { tours } from "../classes/Tours";
 
 const { useState } = React;
-const { Keyboard } = Plugins;
 
 const SearchTab: React.FC = () => {
   const [query, setQuery] = useState<string>("");

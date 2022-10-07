@@ -8,7 +8,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupConfig,
+  setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import {
@@ -50,7 +50,7 @@ import LearnTab from "./pages/LearnTab";
 import DailyPage from "./pages/DailyPage";
 import DatabasePage from "./pages/DatabasePage";
 
-setupConfig({
+setupIonicReact({
   mode: "ios",
 });
 

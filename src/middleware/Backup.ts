@@ -1,15 +1,9 @@
-import {
-  Plugins,
-  FilesystemDirectory,
-  FilesystemEncoding,
-} from "@capacitor/core";
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { FileOpener } from "@ionic-native/file-opener";
 import { isPlatform } from "@ionic/react";
 
 import VocabCollection from "../classes/VocabCollection";
 import { database } from "./Storage";
-
-const { Filesystem } = Plugins;
 
 const loadFile = (fileType: string) => {
   return new Promise<File>((resolve, reject) => {
@@ -48,8 +42,8 @@ export const downloadFile = (
     Filesystem.writeFile({
       path: fileName,
       data: data,
-      directory: FilesystemDirectory.Documents,
-      encoding: FilesystemEncoding.UTF8,
+      directory: Directory.Documents,
+      encoding: Encoding.UTF8,
     }).then((result) => {
       FileOpener.showOpenWithDialog(result.uri, fileType);
     });
@@ -84,8 +78,8 @@ export const saveBackup = async () => {
           Filesystem.writeFile({
             path: fileName,
             data: state,
-            directory: FilesystemDirectory.Documents,
-            encoding: FilesystemEncoding.UTF8,
+            directory: Directory.Documents,
+            encoding: Encoding.UTF8,
           })
             .then((result) => {
               if (isPlatform("ios")) {
