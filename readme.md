@@ -5,7 +5,7 @@
 # Discite
 
 <a href="#">
-  <img alt="version" src="https://img.shields.io/static/v1.svg?label=Version&message=2.5.0&color=389ad5&labelColor=31c4f3&style=for-the-badge" />
+  <img alt="version" src="https://img.shields.io/static/v1.svg?label=Version&message=2.5.1&color=389ad5&labelColor=31c4f3&style=for-the-badge" />
 </a>
 <a href="#">
   <img alt="open source" src="https://img.shields.io/static/v1.svg?label=Open&message=Source&color=46a4b8&labelColor=3ac1d0&style=for-the-badge" />
