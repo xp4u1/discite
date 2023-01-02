@@ -1,3 +1,10 @@
+# 2.5.1
+
+## Fehler
+
+- Änderung der Berechtigungen
+  - Der Maintainer von dem Cordova-Plugin `cordova-plugin-file-opener2` zwingt allen Apps, die es benutzen die Berechtigung `android.permission.REQUEST_INSTALL_PACKAGES` auf. Google droht die App deshalb zu entfernen.
+
 # 2.5.0
 
 ## Verbesserungen
