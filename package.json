@@ -1,7 +1,7 @@
 {
   "name": "discite",
   "description": "Die smarte App zum Latein Lernen",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "private": true,
   "dependencies": {
     "@apollo/client": "3.7.0",

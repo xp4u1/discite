@@ -1,3 +1,9 @@
+# 2.5.2
+
+## Verbesserungen
+
+- Die App unterstützt nun die neuste Android Version 14 (API Level 34).
+
 # 2.5.1
 
 ## Hotfix
