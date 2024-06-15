@@ -1,3 +1,9 @@
+# 2.6.0
+
+## Neuerungen
+
+- Es gibt nun eine Tour für den Datenbank-Editor.
+
 # 2.5.2
 
 ## Verbesserungen
