@@ -131,7 +131,7 @@ const LearnTab: React.FC = () => {
               </IonCardContent>
             </IonCard>
           </IonCol>
-          <IonCol className="learnCol">
+          <IonCol className="learnCol tourLearnDatabase">
             <IonCard className="statsCard">
               <IonCardHeader>
                 <IonCardTitle>Dein Wortschatz</IonCardTitle>

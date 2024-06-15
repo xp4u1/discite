@@ -22,6 +22,8 @@ import { database } from "../middleware/Storage";
 import DictionaryEntry from "../classes/DictionaryEntry";
 import { useLiveQuery } from "dexie-react-hooks";
 import { LearnEntry } from "../middleware/database/DisciteDatabase";
+import JoyrideTour from "../components/JoyrideTour";
+import { tours } from "../classes/Tours";
 
 const { useState, useRef, useEffect } = React;
 
@@ -109,6 +111,8 @@ const DatabasePage: React.FC = () => {
 
   return (
     <DiscitePage title="Datenbank" defaultBackHref="/learn">
+      <JoyrideTour tour={tours.database} />
+
       <IonSearchbar
         value={query}
         onIonChange={(event) => {
@@ -116,6 +120,7 @@ const DatabasePage: React.FC = () => {
         }}
         placeholder="Suche"
         id="searchbar"
+        class="tourDatabaseIntro"
       />
 
       <IonList lines="full">

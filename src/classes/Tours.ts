@@ -120,6 +120,11 @@ export const tours = {
           "Wenn eine Vokabel das achte Mal wiederholt wurde, ist sie in deinem Langzeitgedächtnis.",
       },
       {
+        target: ".tourLearnDatabase",
+        content:
+          "Hier ist ein Überblick über all deine Karteikarten. Hier kannst du auch bereits erstellte Einträge bearbeiten und löschen.",
+      },
+      {
         target: ".tourLearnButton",
         content:
           "Mit einem Klick auf diesen Knopf kannst du alle Vokabeln für heute wiederholen. Der Fortschritt wird aber nur gespeichert, wenn du alle Vokabeln gelernt hast.",
@@ -143,6 +148,17 @@ export const tours = {
         target: ".tourSave",
         content:
           "Hier speicherst du deine Karteikarte. Wenn du sie bearbeiten oder löschen willst, musst du in der Listenansicht mit dem Finger auf der Vokabel von rechts nach links wischen.",
+      },
+    ],
+  },
+  database: {
+    name: "tour-database",
+    steps: [
+      {
+        target: ".tourDatabaseIntro",
+        title: "Die Datenbank",
+        content:
+          "Hier kannst du Karteikarten bearbeiten und löschen. Du kannst diese Aktionen aufrufen, indem du die Einträge mit dem Finger nach links wischst.",
       },
     ],
   },
